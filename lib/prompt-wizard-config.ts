@@ -146,8 +146,8 @@ export const globalSteps: Step[] = [
         name: "orientation",
         type: "radio",
         options: [
-          { label: "Portrait (1080x1350)", value: "portrait" },
-          { label: "Landscape (1350x1080)", value: "landscape" },
+          { label: "Portrait (1024x1536)", value: "portrait" },
+          { label: "Landscape (1536x1024)", value: "landscape" },
         ],
         tooltip:
           "Choose the aspect ratio for your ad. Portrait is taller, Landscape is wider",
@@ -286,7 +286,7 @@ export const templates: Record<string, TemplateConfig> = {
       },
     ],
     generatePrompt: (values) => {
-      let prompt = `Create a photorealistic static ad image for the brand ${
+      return `Create a photorealistic static ad image for the brand ${
         values.productName
       } featuring a ${values.productType} placed on a ${
         values.surfaceType
@@ -299,9 +299,6 @@ ${values.decor1 ? `– ${values.decor1}\n` : ""}${
 The product should be the hero of the image. Format: ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       }.`;
-
-      prompt = appendReferenceIntent(prompt, values.referenceIntent);
-      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
   "styled-product": {
@@ -369,7 +366,7 @@ The product should be the hero of the image. Format: ${
       },
     ],
     generatePrompt: (values) => {
-      let prompt = `Create 1 ad-ready image of a product named ${
+      return `Create 1 ad-ready image of a product named ${
         values.productName
       }, described as ${
         values.productDescription
@@ -377,9 +374,6 @@ The product should be the hero of the image. Format: ${
 Maintain the product's proportions, label placement, and design. Do not alter the label or shape. Format: ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       }.`;
-
-      prompt = appendReferenceIntent(prompt, values.referenceIntent);
-      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
   "product-with-person": {
@@ -505,7 +499,7 @@ Maintain the product's proportions, label placement, and design. Do not alter th
       },
     ],
     generatePrompt: (values) => {
-      let prompt = `Create a photorealistic ad image for ${
+      return `Create a photorealistic ad image for ${
         values.productName
       } showing a ${values.productType} being used or held by a ${
         values.personType
@@ -521,9 +515,6 @@ ${
 Keep proportions and label accuracy true to the original. Format: ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       }.`;
-
-      prompt = appendReferenceIntent(prompt, values.referenceIntent);
-      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
   "flat-lay": {
@@ -624,7 +615,7 @@ Keep proportions and label accuracy true to the original. Format: ${
       },
     ],
     generatePrompt: (values) => {
-      let prompt = `Create a ${
+      return `Create a ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       } static ad image for ${
         values.productName
@@ -641,9 +632,6 @@ Style the bundle as a premium gift offering placed on a ${values.surfaceType}${
 Lighting: ${
         values.lightingStyle
       }. All items should be balanced and intentional, maintaining a clean top-down view. No extra props or text.`;
-
-      prompt = appendReferenceIntent(prompt, values.referenceIntent);
-      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
 };
@@ -714,6 +702,15 @@ export function appendReferenceIntent(
 ): string {
   if (!referenceIntent || referenceIntent === "none") return prompt;
   return `${prompt}\n\nReference Image Instructions:\n${referenceIntent}`;
+}
+
+export function getTemplateName(templateType: string): string {
+  return templateType
+    ? templateType
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    : "";
 }
 
 // Export types for use in other files

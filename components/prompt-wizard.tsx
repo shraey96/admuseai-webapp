@@ -28,6 +28,8 @@ import {
   templateDescriptions,
   validateStepFields,
   appendExtraInstructions,
+  appendReferenceIntent,
+  getTemplateName,
 } from "@/lib/prompt-wizard-config";
 import type { Field } from "@/lib/prompt-wizard-config";
 import {
@@ -114,8 +116,9 @@ export default function PromptWizard({
 
   const generatePrompt = () => {
     const basePrompt = templates[values.template].generatePrompt(values);
+    const prompt = appendReferenceIntent(basePrompt, values.referenceIntent);
     const finalPrompt = appendExtraInstructions(
-      basePrompt,
+      prompt,
       values.extraInstructions
     );
     onPromptGenerated(finalPrompt);
@@ -335,14 +338,7 @@ export default function PromptWizard({
                                   <div className="flex items-center gap-2">
                                     {getTemplateIcon(templateType)}
                                     <div className="font-medium">
-                                      {templateType
-                                        .split("-")
-                                        .map(
-                                          (word) =>
-                                            word.charAt(0).toUpperCase() +
-                                            word.slice(1)
-                                        )
-                                        .join(" ")}
+                                      {getTemplateName(templateType)}
                                     </div>
                                   </div>
                                   <div className="text-sm text-gray-500 mt-2">

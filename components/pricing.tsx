@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -63,11 +62,6 @@ export default function Pricing() {
                 ))}
               </ul>
             </CardContent>
-            <CardFooter className="relative z-10 pt-2 pb-6 flex justify-center">
-              <p className="text-sm text-zinc-500 text-center max-w-xs">
-                Bundle pricing coming soon! Contact us for high-volume needs.
-              </p>
-            </CardFooter>
           </Card>
         </motion.div>
       </div>
