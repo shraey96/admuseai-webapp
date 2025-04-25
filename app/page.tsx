@@ -5,42 +5,45 @@ import Features from "@/components/features";
 import Examples from "@/components/examples";
 import Pricing from "@/components/pricing";
 import FAQ from "@/components/faq";
+import BackgroundWrapper from "./components/BackgroundWrapper";
 
 export default function Home() {
   return (
     <>
       <main className="min-h-screen">
-        <div className="bg-[url('/images/background-pattern.png')] bg-repeat">
+        <BackgroundWrapper variant="waves" className="relative z-10">
           <Suspense fallback={<div>Loading...</div>}>
             <Hero />
           </Suspense>
-        </div>
+        </BackgroundWrapper>
 
-        <Benefits />
+        <BackgroundWrapper variant="default">
+          <Benefits />
+        </BackgroundWrapper>
 
-        <div className="bg-[url('/images/background-pattern.png')] bg-repeat py-20">
+        <BackgroundWrapper variant="dots" className="py-20">
           <div className="container mx-auto px-4">
             <Examples />
           </div>
-        </div>
+        </BackgroundWrapper>
 
-        <div className="bg-white bg-[url('/images/background-pattern.png')] bg-repeat py-20">
+        <BackgroundWrapper variant="gradient" className="py-20">
           <div className="container mx-auto px-4">
             <Features />
           </div>
-        </div>
+        </BackgroundWrapper>
 
-        <div className="bg-gradient-to-b from-[#f5f5ff] to-white bg-[url('/images/background-pattern.png')] bg-repeat py-20">
+        <BackgroundWrapper variant="dots" className="py-20">
           <div className="container mx-auto px-4">
             <Pricing />
           </div>
-        </div>
+        </BackgroundWrapper>
 
-        <div className="bg-white bg-[url('/images/background-pattern.png')] bg-repeat py-20">
+        <BackgroundWrapper variant="gradient" className="py-20">
           <div className="container mx-auto px-4">
             <FAQ />
           </div>
-        </div>
+        </BackgroundWrapper>
       </main>
     </>
   );

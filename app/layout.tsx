@@ -9,8 +9,8 @@ import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const OG_IMAGE_PATH = "/images/og-image.png";
-const OG_IMAGE_TWITTER_PATH = "/images/og-twitter.png";
+const OG_IMAGE_PATH = "/images/og-desktop.png";
+const OG_IMAGE_TWITTER_PATH = OG_IMAGE_PATH;
 
 export const metadata: Metadata = {
   title: "AdMuseAI - AI-Powered Ad Creative Generator",
