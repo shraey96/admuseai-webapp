@@ -1,5 +1,10 @@
 // Type definitions
-type FieldType = "text" | "dropdown" | "radio" | "textarea";
+type FieldType =
+  | "text"
+  | "dropdown"
+  | "radio"
+  | "textarea"
+  | "creatable-select";
 
 interface FieldOption {
   label: string;
@@ -31,12 +36,23 @@ interface DropdownField extends BaseField {
   options: FieldOption[];
 }
 
+interface CreatableSelectField extends BaseField {
+  type: "creatable-select";
+  options: FieldOption[];
+  placeholder?: string;
+}
+
 interface RadioField extends BaseField {
   type: "radio";
   options: FieldOption[];
 }
 
-type Field = TextField | DropdownField | RadioField | TextareaField;
+type Field =
+  | TextField
+  | DropdownField
+  | RadioField
+  | TextareaField
+  | CreatableSelectField;
 
 interface Step {
   step: number;
@@ -148,7 +164,7 @@ export const templates: Record<string, TemplateConfig> = {
           {
             label: "Surface Type",
             name: "surfaceType",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Marble", value: "marble" },
               { label: "Wood", value: "wood" },
@@ -158,12 +174,13 @@ export const templates: Record<string, TemplateConfig> = {
               { label: "Bleached Wood", value: "bleached wood" },
               { label: "Honed Stone", value: "honed stone" },
             ],
+            placeholder: "Select or type a surface type",
             tooltip: "The material surface where your product will be placed",
           },
           {
             label: "Environment",
             name: "location",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Bathroom Vanity", value: "bathroom vanity" },
               { label: "Kitchen Counter", value: "kitchen counter" },
@@ -173,12 +190,13 @@ export const templates: Record<string, TemplateConfig> = {
               { label: "Spa Bathroom", value: "spa bathroom" },
               { label: "Minimalist Interior", value: "minimalist interior" },
             ],
+            placeholder: "Select or type an environment",
             tooltip: "The setting where your product will be showcased",
           },
           {
             label: "Mood / Style",
             name: "moodStyle",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Cozy", value: "cozy" },
               { label: "Luxury", value: "luxury" },
@@ -188,6 +206,7 @@ export const templates: Record<string, TemplateConfig> = {
               { label: "Fresh", value: "fresh" },
               { label: "Modern", value: "modern" },
             ],
+            placeholder: "Select or type a mood/style",
             tooltip: "The overall atmosphere and feeling of the scene",
           },
         ],
@@ -227,7 +246,7 @@ export const templates: Record<string, TemplateConfig> = {
           {
             label: "Color / Texture",
             name: "colorTexture",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Beige Tones", value: "beige tones" },
               { label: "Stone Texture", value: "stone texture" },
@@ -235,6 +254,7 @@ export const templates: Record<string, TemplateConfig> = {
               { label: "Neutral Wall", value: "neutral wall" },
               { label: "Warm Tones", value: "warm tones" },
             ],
+            placeholder: "Select or type a color/texture",
             tooltip: "The color scheme and texture elements in the scene",
           },
         ],
@@ -274,7 +294,7 @@ The product should be the hero of the image. Format: ${
           {
             label: "Shooting Style",
             name: "shootingStyle",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               {
                 label: "Nordic Calm",
@@ -313,6 +333,7 @@ The product should be the hero of the image. Format: ${
                   "warm light, natural textures (linen, wood, stone)",
               },
             ],
+            placeholder: "Select or type a shooting style",
             tooltip:
               "Choose a visual style that best represents your product's aesthetic",
           },
@@ -340,7 +361,7 @@ Maintain the product's proportions, label placement, and design. Do not alter th
           {
             label: "Person Type",
             name: "personType",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Young Black Woman", value: "young Black woman" },
               {
@@ -361,13 +382,14 @@ Maintain the product's proportions, label placement, and design. Do not alter th
                 value: "young Caucasian woman",
               },
             ],
+            placeholder: "Select or type a person description",
             tooltip:
               "The demographic and characteristics of the person in the ad",
           },
           {
             label: "Environment",
             name: "location",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Bathroom Mirror", value: "bathroom mirror" },
               { label: "Gym", value: "gym" },
@@ -377,12 +399,13 @@ Maintain the product's proportions, label placement, and design. Do not alter th
               { label: "Modern Office", value: "modern office" },
               { label: "Outdoor Cafe", value: "outdoor cafe" },
             ],
+            placeholder: "Select or type an environment",
             tooltip: "The setting where the person will be using your product",
           },
           {
             label: "Season / Target Demo",
             name: "seasonDemo",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Spring", value: "spring" },
               { label: "Summer", value: "summer" },
@@ -390,6 +413,7 @@ Maintain the product's proportions, label placement, and design. Do not alter th
               { label: "Winter", value: "winter" },
               { label: "All Seasons", value: "all seasons" },
             ],
+            placeholder: "Select or type a season/demographic",
             tooltip: "The seasonal context and target demographic for the ad",
           },
         ],
@@ -402,7 +426,7 @@ Maintain the product's proportions, label placement, and design. Do not alter th
           {
             label: "Mood / Vibe",
             name: "moodVibe",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Minimal Luxury", value: "minimal luxury" },
               { label: "Earthy Natural", value: "earthy natural" },
@@ -411,6 +435,7 @@ Maintain the product's proportions, label placement, and design. Do not alter th
               { label: "Professional", value: "professional" },
               { label: "Relaxed", value: "relaxed" },
             ],
+            placeholder: "Select or type a mood/vibe",
             tooltip: "The emotional atmosphere and feeling of the scene",
           },
           {
@@ -489,7 +514,7 @@ Keep proportions and label accuracy true to the original. Format: ${
           {
             label: "Surface Type",
             name: "surfaceType",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Linen", value: "linen" },
               { label: "Honed Stone", value: "honed stone" },
@@ -498,6 +523,7 @@ Keep proportions and label accuracy true to the original. Format: ${
               { label: "Textured Paper", value: "textured paper" },
               { label: "Soft Fabric", value: "soft fabric" },
             ],
+            placeholder: "Select or type a surface type",
             tooltip: "The material surface for the flat-lay arrangement",
           },
           {
@@ -520,9 +546,9 @@ Keep proportions and label accuracy true to the original. Format: ${
         description: "Configure visual styling",
         fields: [
           {
-            label: "Prop (Optional)",
+            label: "Prop",
             name: "propItem",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Ceramic Tray", value: "ceramic tray" },
               { label: "Dried Flowers", value: "dried flowers" },
@@ -531,13 +557,14 @@ Keep proportions and label accuracy true to the original. Format: ${
               { label: "Fabric Swatch", value: "fabric swatch" },
               { label: "None", value: "none" },
             ],
+            placeholder: "Select or type a prop",
             optional: true,
-            tooltip: "Optional prop to enhance the arrangement (optional)",
+            tooltip: "Optional prop to enhance the arrangement",
           },
           {
             label: "Color Palette",
             name: "colorPalette",
-            type: "dropdown",
+            type: "creatable-select",
             options: [
               { label: "Soft Neutrals", value: "soft neutrals" },
               { label: "Complementary Tones", value: "complementary tones" },
@@ -545,6 +572,7 @@ Keep proportions and label accuracy true to the original. Format: ${
               { label: "Cool Tones", value: "cool tones" },
               { label: "Earth Tones", value: "earth tones" },
             ],
+            placeholder: "Select or type a color palette",
             tooltip: "The color scheme for the flat-lay composition",
           },
           {

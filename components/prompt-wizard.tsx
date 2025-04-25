@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { CreatableSelectComponent } from "@/components/ui/creatable-select";
 import {
   Select,
   SelectContent,
@@ -143,6 +144,16 @@ export default function PromptWizard({
             placeholder={field.placeholder}
             className="mt-1"
             rows={field.rows || 4}
+          />
+        );
+      case "creatable-select":
+        return (
+          <CreatableSelectComponent
+            options={field.options}
+            value={value}
+            onChange={handleChange}
+            placeholder={field.placeholder}
+            className="mt-1"
           />
         );
       case "dropdown":
