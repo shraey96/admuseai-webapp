@@ -18,7 +18,7 @@ const faqs = [
   {
     question: "How long does it take to generate an ad?",
     answer:
-      "Most ad creatives are generated within 20-30 seconds after payment is processed.",
+      "Most ad creatives are generated within a minute after payment is processed.",
   },
   {
     question: "Can I request changes to my generated ad?",
