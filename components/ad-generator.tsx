@@ -17,13 +17,9 @@ import Script from "next/script";
 import { initPayment } from "@/lib/payment";
 import AnimatedBorder from "@/components/animated-border";
 
-type Stage = "upload" | "generating" | "result";
+import PromptWizard from "./prompt-wizard";
 
-const promptExamples = [
-  "Luxe skincare in marble bathroom",
-  "Playful candy ad, high contrast",
-  "Modern minimal shoe ad with shadows",
-];
+type Stage = "upload" | "generating" | "result";
 
 export default function AdGenerator() {
   const [stage, setStage] = useState<Stage>("upload");
@@ -33,7 +29,8 @@ export default function AdGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showResultModal, setShowResultModal] = useState(false);
-  const [isPaddleReady, setIsPaddleReady] = useState(false);
+
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +55,8 @@ export default function AdGenerator() {
 
     setError(null);
     setIsLoading(true);
+
+    const isPaddleReady = typeof window !== "undefined" && window.Paddle;
 
     if (!isPaddleReady) {
       toast({
@@ -127,6 +126,10 @@ export default function AdGenerator() {
     setShowResultModal(false);
   };
 
+  const handlePromptGenerated = (generatedPrompt: string) => {
+    setPrompt(generatedPrompt);
+  };
+
   if (stage === "generating") {
     return <GenerationScreen />;
   }
@@ -138,7 +141,6 @@ export default function AdGenerator() {
         onLoad={() => {
           if (window.Paddle) {
             window.Paddle.Environment.set(process.env.NEXT_PUBLIC_PADDLE_ENV);
-            setIsPaddleReady(true);
           }
         }}
       />
@@ -234,10 +236,7 @@ export default function AdGenerator() {
               </div>
 
               <div>
-                <Label
-                  htmlFor="prompt"
-                  className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block"
-                >
+                <Label className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block">
                   <span className="flex items-center">
                     <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
                       2
@@ -245,25 +244,44 @@ export default function AdGenerator() {
                     Add Prompt
                   </span>
                 </Label>
-                <Textarea
-                  id="prompt"
-                  placeholder="Describe the ad creative you want to generate..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  className="min-h-[80px] resize-none"
-                />
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {promptExamples.map((example, i) => (
-                    <Button
-                      key={i}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs"
-                      onClick={() => setPrompt(example)}
-                    >
-                      {example}
-                    </Button>
-                  ))}
+                <div className="space-y-4">
+                  <div className="relative">
+                    <Textarea
+                      id="prompt"
+                      placeholder="Describe your ad creative: guidelines, setting, lighting, mood, etc. E.g. 'Product shot of serum bottle on marble counter, modern bathroom, soft morning light'"
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      className="min-h-[120px] resize-none"
+                    />
+                    <div className="mt-1.5 text-right">
+                      <a
+                        href="/prompt-writing-guidelines"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline"
+                      >
+                        Prompt Writing Guidelines
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-gray-500">Or</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsWizardOpen(true)}
+                    className="w-full flex items-center gap-2 py-6"
+                  >
+                    <span>💡</span>
+                    Help me write a prompt
+                  </Button>
                 </div>
               </div>
 
@@ -285,6 +303,12 @@ export default function AdGenerator() {
           onGenerateAnother={handleGenerateAnother}
         />
       )}
+
+      <PromptWizard
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        onPromptGenerated={handlePromptGenerated}
+      />
     </>
   );
 }

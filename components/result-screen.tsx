@@ -1,18 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Download,
-  Share,
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  AlertCircle,
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { downloadImage } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface ResultScreenProps {
   images: string[];
@@ -25,6 +25,25 @@ export default function ResultScreen({
 }: ResultScreenProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const currentImage = images[activeIndex];
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Copy all image links to clipboard
+    const imageLinks = images.join("\n");
+    navigator.clipboard
+      .writeText(imageLinks)
+      .then(() => {
+        toast({
+          title: "Links Copied!",
+          description: "All image links have been copied to your clipboard",
+          variant: "default",
+          duration: 3000,
+        });
+      })
+      .catch((err) => {
+        console.error("Failed to copy links:", err);
+      });
+  }, [images, toast]);
 
   const handlePrevious = () => {
     setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -42,20 +61,24 @@ export default function ResultScreen({
   };
 
   return (
-    <Card className="bg-white/95 backdrop-blur-xl shadow-xl border-0 overflow-hidden rounded-2xl relative w-full max-w-3xl">
-      <CardContent className="p-6">
-        <div className="text-center mb-3">
-          <div className="flex items-center justify-center mb-1">
-            <div className="h-6 w-6 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center mr-2">
-              <Sparkles className="h-3 w-3 text-white" />
+    <div className="w-full max-w-3xl bg-white rounded-2xl">
+      <div className="p-6">
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center mb-4">
+            <div className="h-8 w-8 flex items-center justify-center mr-3">
+              <img
+                src="/images/admuse.png"
+                alt="AdMuseAI Logo"
+                className="h-8 w-8"
+              />
             </div>
-            <span className="bg-gradient-to-r from-indigo-500 to-violet-600 text-transparent bg-clip-text font-semibold">
+            <span className="text-[#6366f1] font-semibold text-lg">
               AdMuseAI
             </span>
           </div>
 
           <motion.h3
-            className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 text-transparent bg-clip-text mb-0.5"
+            className="text-[#6366f1] text-2xl font-bold"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -64,9 +87,9 @@ export default function ResultScreen({
           </motion.h3>
         </div>
 
-        {/* Main image display - Set to fixed height instead of aspect-square */}
+        {/* Main image display */}
         <motion.div
-          className="relative h-[min(65vh,480px)] w-full mb-3 rounded-xl overflow-hidden shadow-lg group"
+          className="relative h-[min(65vh,480px)] w-full mb-6 rounded-2xl overflow-hidden bg-[#F8F9FF]"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
@@ -75,7 +98,7 @@ export default function ResultScreen({
             src={currentImage || "/placeholder.svg"}
             alt={`Generated ad creative ${activeIndex + 1}`}
             fill
-            className="object-contain"
+            className="object-contain rounded-2xl"
           />
 
           {images.length > 1 && (
@@ -84,7 +107,7 @@ export default function ResultScreen({
                 variant="ghost"
                 size="icon"
                 onClick={handlePrevious}
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm h-9 w-9 rounded-full shadow-md"
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm h-9 w-9 rounded-full shadow-sm"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
@@ -92,7 +115,7 @@ export default function ResultScreen({
                 variant="ghost"
                 size="icon"
                 onClick={handleNext}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm h-9 w-9 rounded-full shadow-md"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm h-9 w-9 rounded-full shadow-sm"
               >
                 <ChevronRight className="h-5 w-5" />
               </Button>
@@ -103,7 +126,7 @@ export default function ResultScreen({
         {/* Thumbnail gallery */}
         {images.length > 1 && (
           <motion.div
-            className="flex gap-1.5 mb-4 justify-center flex-wrap"
+            className="flex gap-1.5 mb-6 justify-center flex-wrap"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -113,7 +136,7 @@ export default function ResultScreen({
                 key={index}
                 className={`relative h-14 w-14 rounded-md overflow-hidden cursor-pointer transition-all duration-200 ${
                   index === activeIndex
-                    ? "ring-2 ring-indigo-500 ring-offset-1"
+                    ? "ring-2 ring-[#6366f1] ring-offset-1"
                     : "opacity-70 hover:opacity-100"
                 }`}
                 onClick={() => setActiveIndex(index)}
@@ -129,44 +152,49 @@ export default function ResultScreen({
           </motion.div>
         )}
 
+        {/* Info message */}
+        <div className="mb-6 p-3 bg-[#EEF2FF] rounded-xl border border-[#6366f1]/20">
+          <div className="flex items-start space-x-3">
+            <AlertCircle className="h-5 w-5 text-[#6366f1] mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-[#4338ca]">
+              <p>
+                All image links have been copied to your clipboard. Images are
+                available for 24 hours only - please download them before
+                leaving.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Action buttons */}
         <motion.div
-          className="flex flex-row gap-3 justify-center"
+          className="flex flex-row gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex-1"
-          >
+          <motion.div whileHover={{ scale: 1.02 }} className="flex-1">
             <Button
               onClick={handleDownload}
-              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl transition-all duration-300 shadow-md hover:shadow-lg border-0 py-3 h-auto"
-              size="default"
+              className="w-full bg-[#6366f1] hover:bg-[#5558e6] text-white rounded-xl py-3 h-auto"
             >
               <Download className="mr-2 h-4 w-4" />
               Download
             </Button>
           </motion.div>
 
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex-1"
-          >
+          <motion.div whileHover={{ scale: 1.02 }} className="flex-1">
             <Button
               variant="outline"
               onClick={onGenerateAnother}
-              size="default"
-              className="w-full border-indigo-200 hover:bg-indigo-50 text-indigo-700 rounded-xl transition-all duration-300 py-3 h-auto"
+              className="w-full border-[#6366f1] text-[#6366f1] hover:bg-[#6366f1]/5 rounded-xl py-3 h-auto"
             >
               <Sparkles className="mr-2 h-4 w-4" />
               Generate More
             </Button>
           </motion.div>
         </motion.div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
