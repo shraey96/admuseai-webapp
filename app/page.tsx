@@ -1,3 +1,5 @@
+"use client";
+
 import { Suspense } from "react";
 import Hero from "@/components/hero";
 import Benefits from "@/components/benefits";
@@ -6,8 +8,16 @@ import Examples from "@/components/examples";
 import Pricing from "@/components/pricing";
 import FAQ from "@/components/faq";
 import BackgroundWrapper from "./components/BackgroundWrapper";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    trackAnalytics(ANALYTICS_EVENTS.PAGE_VIEWED, {
+      page: "Home",
+    });
+  }, []);
+
   return (
     <>
       <main className="min-h-screen">

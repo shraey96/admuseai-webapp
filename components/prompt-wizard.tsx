@@ -47,6 +47,7 @@ interface FormValues {
   template: TemplateType;
   productName: string;
   orientation: "portrait" | "landscape";
+  referenceIntent: string;
   // Product in Environment
   productType?: string;
   surfaceType?: string;
@@ -88,6 +89,7 @@ export default function PromptWizard({
     template: "product-in-environment",
     productName: "",
     orientation: "portrait",
+    referenceIntent: "none",
   });
 
   const steps = getTemplateSteps(values.template);
@@ -223,21 +225,23 @@ export default function PromptWizard({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col overflow-hidden">
-        <DialogHeader className="pb-4 flex-shrink-0">
-          <DialogTitle className="text-2xl">Prompt Wizard</DialogTitle>
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-hidden p-4 sm:p-6">
+        <DialogHeader className="pb-2 sm:pb-4 flex-shrink-0">
+          <DialogTitle className="text-xl sm:text-2xl font-semibold">
+            Prompt Wizard
+          </DialogTitle>
         </DialogHeader>
 
         {/* Modern Stepper */}
-        <div className="mb-8 flex-shrink-0">
-          <div className="flex items-center justify-between relative">
+        <div className="mb-4 sm:mb-8 flex-shrink-0">
+          <div className="flex items-center justify-between relative px-2">
             {/* Progress Bar */}
             <div
-              className="absolute h-1 bg-gray-200 top-5 left-0 right-0 -mx-4"
+              className="absolute h-1 bg-gray-200 top-4 sm:top-5 left-0 right-0"
               style={{ zIndex: 0 }}
             />
             <div
-              className="absolute h-1 bg-indigo-600 top-5 left-0 -mx-4 transition-all duration-300"
+              className="absolute h-1 bg-indigo-600 top-4 sm:top-5 left-0 transition-all duration-300"
               style={{
                 width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
                 zIndex: 0,
@@ -248,12 +252,12 @@ export default function PromptWizard({
             {steps.map((step) => (
               <div
                 key={step.step}
-                className="relative flex flex-col items-center w-40"
+                className="relative flex flex-col items-center flex-1"
                 style={{ zIndex: 1 }}
               >
                 <div
                   className={`
-                    flex items-center justify-center w-10 h-10 rounded-full 
+                    flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-full 
                     ${
                       step.step <= currentStep
                         ? "bg-indigo-600 text-white"
@@ -263,14 +267,16 @@ export default function PromptWizard({
                   `}
                 >
                   {step.step < currentStep ? (
-                    <Check className="w-5 h-5" />
+                    <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
                   ) : (
-                    <span className="text-sm font-medium">{step.step}</span>
+                    <span className="text-xs sm:text-sm font-medium">
+                      {step.step}
+                    </span>
                   )}
                 </div>
-                <div className="mt-2 text-center">
+                <div className="mt-2 text-center w-full px-1">
                   <div
-                    className={`text-sm font-medium mb-1 ${
+                    className={`text-[11px] leading-tight sm:text-sm font-medium ${
                       step.step <= currentStep
                         ? "text-indigo-600"
                         : "text-gray-500"
@@ -279,7 +285,7 @@ export default function PromptWizard({
                     {step.title}
                   </div>
                   {step.description && (
-                    <div className="text-xs text-gray-400">
+                    <div className="hidden sm:block text-xs text-gray-400">
                       {step.description}
                     </div>
                   )}
@@ -291,7 +297,7 @@ export default function PromptWizard({
 
         {/* Content Area with Scroll */}
         <div className="flex-1 overflow-y-auto min-h-0">
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
             {currentStepData && (
               <div className="space-y-6">
                 <h3 className="text-lg font-medium text-gray-900">

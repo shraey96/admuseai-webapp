@@ -117,6 +117,31 @@ export const globalSteps: Step[] = [
         tooltip: "Describe the physical form of your product",
       },
       {
+        label: "Reference Image Intent",
+        name: "referenceIntent",
+        type: "creatable-select",
+        options: [
+          {
+            label: "None - I only have product images",
+            value: "none",
+            description: "Use this if you've only uploaded product images",
+          },
+          {
+            label: "Replace objects in the image with my product",
+            value: "Replace objects in the image with my product",
+            description:
+              "Put my product in place of similar objects in the uploaded images",
+          },
+          {
+            label: "Use images as style and layout inspiration",
+            value: "Use images as style and layout inspiration",
+            description:
+              "Follow the mood, style and composition but create a new scene",
+          },
+        ],
+        tooltip: "How should we use any additional images you've uploaded?",
+      },
+      {
         label: "Orientation",
         name: "orientation",
         type: "radio",
@@ -261,7 +286,7 @@ export const templates: Record<string, TemplateConfig> = {
       },
     ],
     generatePrompt: (values) => {
-      return `Create a photorealistic static ad image for the brand ${
+      let prompt = `Create a photorealistic static ad image for the brand ${
         values.productName
       } featuring a ${values.productType} placed on a ${
         values.surfaceType
@@ -274,6 +299,9 @@ ${values.decor1 ? `– ${values.decor1}\n` : ""}${
 The product should be the hero of the image. Format: ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       }.`;
+
+      prompt = appendReferenceIntent(prompt, values.referenceIntent);
+      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
   "styled-product": {
@@ -341,7 +369,7 @@ The product should be the hero of the image. Format: ${
       },
     ],
     generatePrompt: (values) => {
-      return `Create 1 ad-ready image of a product named ${
+      let prompt = `Create 1 ad-ready image of a product named ${
         values.productName
       }, described as ${
         values.productDescription
@@ -349,6 +377,9 @@ The product should be the hero of the image. Format: ${
 Maintain the product's proportions, label placement, and design. Do not alter the label or shape. Format: ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       }.`;
+
+      prompt = appendReferenceIntent(prompt, values.referenceIntent);
+      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
   "product-with-person": {
@@ -474,7 +505,7 @@ Maintain the product's proportions, label placement, and design. Do not alter th
       },
     ],
     generatePrompt: (values) => {
-      return `Create a photorealistic ad image for ${
+      let prompt = `Create a photorealistic ad image for ${
         values.productName
       } showing a ${values.productType} being used or held by a ${
         values.personType
@@ -490,6 +521,9 @@ ${
 Keep proportions and label accuracy true to the original. Format: ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       }.`;
+
+      prompt = appendReferenceIntent(prompt, values.referenceIntent);
+      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
   "flat-lay": {
@@ -590,7 +624,7 @@ Keep proportions and label accuracy true to the original. Format: ${
       },
     ],
     generatePrompt: (values) => {
-      return `Create a ${
+      let prompt = `Create a ${
         values.orientation === "portrait" ? "1080x1350" : "1350x1080"
       } static ad image for ${
         values.productName
@@ -607,6 +641,9 @@ Style the bundle as a premium gift offering placed on a ${values.surfaceType}${
 Lighting: ${
         values.lightingStyle
       }. All items should be balanced and intentional, maintaining a clean top-down view. No extra props or text.`;
+
+      prompt = appendReferenceIntent(prompt, values.referenceIntent);
+      return appendExtraInstructions(prompt, values.extraInstructions);
     },
   },
 };
@@ -668,6 +705,15 @@ export function appendExtraInstructions(
 ): string {
   if (!extraInstructions) return prompt;
   return `${prompt}\n\nExtra instructions:\n${extraInstructions}`;
+}
+
+// Helper function to append reference intent instructions
+export function appendReferenceIntent(
+  prompt: string,
+  referenceIntent: string
+): string {
+  if (!referenceIntent || referenceIntent === "none") return prompt;
+  return `${prompt}\n\nReference Image Instructions:\n${referenceIntent}`;
 }
 
 // Export types for use in other files

@@ -16,6 +16,7 @@ import { toast } from "@/components/ui/use-toast";
 import Script from "next/script";
 import { initPayment } from "@/lib/payment";
 import AnimatedBorder from "@/components/animated-border";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 import PromptWizard from "./prompt-wizard";
 
@@ -53,8 +54,7 @@ export default function AdGenerator() {
   const handleGenerate = async () => {
     if (images.length === 0 || !prompt) return;
 
-    setError(null);
-    setIsLoading(true);
+    trackAnalytics(ANALYTICS_EVENTS.GENERATE_AD_CLICKED);
 
     const isPaddleReady = typeof window !== "undefined" && window.Paddle;
 
@@ -276,7 +276,10 @@ export default function AdGenerator() {
 
                   <Button
                     variant="outline"
-                    onClick={() => setIsWizardOpen(true)}
+                    onClick={() => {
+                      trackAnalytics(ANALYTICS_EVENTS.PROMPT_WIZARD_OPENED);
+                      setIsWizardOpen(true);
+                    }}
                     className="w-full flex items-center gap-2 py-6"
                   >
                     <span>💡</span>

@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import ResultScreen from "./result-screen";
 import { useState } from "react";
+import { trackAnalytics } from "@/lib/analytics";
+import { ANALYTICS_EVENTS } from "@/lib/analytics";
 
 interface ResultModalProps {
   isOpen: boolean;
@@ -53,7 +55,10 @@ export default function ResultModal({
         <DialogContent className="max-w-2xl w-full pt-10 items-start md:items-center">
           <ResultScreen
             images={images}
-            onGenerateAnother={() => handleAction("generate")}
+            onGenerateAnother={() => {
+              trackAnalytics(ANALYTICS_EVENTS.GENERATE_AD_CLICKED);
+              handleAction("generate");
+            }}
           />
         </DialogContent>
       </Dialog>

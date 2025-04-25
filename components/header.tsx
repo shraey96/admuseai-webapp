@@ -1,18 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Sparkles, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
-
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 const NAV_ITEMS = [
-  { href: "/#how-it-works", label: "How it works" },
   { href: "/#examples", label: "Examples" },
+  { href: "/#how-it-works", label: "How it works" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
 ];
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const trackLinkClicked = (link: string) => {
+    trackAnalytics(ANALYTICS_EVENTS.HEADER_LINK_CLICKED, {
+      link,
+    });
+  };
 
   return (
     <header
@@ -49,6 +55,9 @@ export default function Header() {
               key={item.href}
               href={item.href}
               className="text-lg font-medium text-zinc-500 hover:text-indigo-600 transition-colors"
+              onClick={() => {
+                trackLinkClicked(item.href);
+              }}
             >
               {item.label}
             </Link>
@@ -77,7 +86,10 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 className="block text-lg font-medium text-zinc-500 hover:text-indigo-600 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  trackLinkClicked(item.href);
+                }}
               >
                 {item.label}
               </Link>

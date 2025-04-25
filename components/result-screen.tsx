@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { downloadImage } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 interface ResultScreenProps {
   images: string[];
   onGenerateAnother: () => void;
@@ -58,6 +58,7 @@ export default function ResultScreen({
       currentImage,
       `admuseai-creative-${activeIndex + 1}-${Date.now()}.png`
     );
+    trackAnalytics(ANALYTICS_EVENTS.DOWNLOAD_AD_CLICKED);
   };
 
   return (
