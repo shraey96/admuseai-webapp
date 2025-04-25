@@ -5,8 +5,6 @@ import Features from "@/components/features";
 import Examples from "@/components/examples";
 import Pricing from "@/components/pricing";
 import FAQ from "@/components/faq";
-import Footer from "@/components/footer";
-import Script from "next/script";
 
 export default function Home() {
   return (
@@ -43,8 +41,6 @@ export default function Home() {
             <FAQ />
           </div>
         </div>
-
-        <Footer />
       </main>
     </>
   );

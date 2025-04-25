@@ -15,6 +15,7 @@ import { generateAdCreative } from "@/lib/api";
 import { toast } from "@/components/ui/use-toast";
 import Script from "next/script";
 import { initPayment } from "@/lib/payment";
+import AnimatedBorder from "@/components/animated-border";
 
 type Stage = "upload" | "generating" | "result";
 
@@ -141,169 +142,146 @@ export default function AdGenerator() {
           }
         }}
       />
-      <Card className="bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
-        <CardContent className="p-7">
-          <div className="mb-5">
-            <h2 className="text-xl font-semibold text-gray-800">Try it out!</h2>
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          </div>
+      <AnimatedBorder>
+        <Card className="bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
+          <CardContent className="p-4 sm:p-7">
+            <div className="mb-4 sm:mb-5">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+                Try it out!
+              </h2>
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            </div>
 
-          <div className="space-y-6">
-            <div>
-              <Label
-                htmlFor="images"
-                className="text-sm font-medium text-zinc-700 mb-3 block"
-              >
-                <span className="flex items-center">
-                  <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
-                    1
-                  </span>
-                  Upload Images{" "}
-                  <span className="text-xs text-zinc-500 ml-2">
-                    ({images.length}/4)
-                  </span>
-                </span>
-              </Label>
-
-              {images.length === 0 ? (
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 py-14 px-4 transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
+            <div className="space-y-4 sm:space-y-6">
+              <div>
+                <Label
+                  htmlFor="images"
+                  className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block"
                 >
-                  <input
-                    type="file"
-                    id="images"
-                    ref={fileInputRef}
-                    className="hidden"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                  />
-                  <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
-                    <ImagePlus className="h-6 w-6 text-indigo-500" />
-                  </div>
-                  <p className="text-sm text-center text-zinc-700 font-medium">
-                    Upload product or reference image
-                  </p>
-                </motion.div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                  {images.map((img, index) => (
-                    <motion.div
-                      key={index}
-                      className="relative aspect-square border rounded-xl overflow-hidden shadow-sm group"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Image
-                        src={img || "/placeholder.svg"}
-                        alt={`Image ${index + 1}`}
-                        fill
-                        className="object-cover transition-transform group-hover:scale-105 duration-300"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="absolute top-1 right-1 h-5 w-5 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        onClick={() => removeImage(index)}
-                      >
-                        <X className="h-2.5 w-2.5" />
-                      </Button>
-                    </motion.div>
-                  ))}
-                  {images.length < 4 && (
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 aspect-square py-6 px-3 transition-colors"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <input
-                        type="file"
-                        id="images"
-                        ref={fileInputRef}
-                        className="hidden"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageUpload}
-                      />
-                      <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
-                        <ImagePlus className="h-5 w-5 text-indigo-500" />
-                      </div>
-                      <p className="text-xs text-center text-zinc-700 font-medium">
-                        Add reference image
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="prompt"
-                className="text-sm font-medium text-zinc-700 block"
-              >
-                <span className="flex items-center">
-                  <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
-                    2
+                  <span className="flex items-center">
+                    <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
+                      1
+                    </span>
+                    Upload Images{" "}
+                    <span className="text-xs text-zinc-500 ml-2">
+                      ({images.length}/4)
+                    </span>
                   </span>
-                  Describe Your Ad
-                </span>
-              </Label>
-              <Textarea
-                id="prompt"
-                placeholder="Describe the style, mood, and setting for your ad..."
-                className="resize-none h-24 focus:ring-indigo-400 focus:border-indigo-400 rounded-xl border-gray-200 text-sm"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-              />
-            </div>
+                </Label>
 
-            <div>
-              <Label className="text-xs text-zinc-500 mb-2 block">
-                Try these examples:
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {promptExamples.map((example, index) => (
-                  <motion.button
-                    key={index}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200"
-                    onClick={() => setPrompt(example)}
+                {images.length === 0 ? (
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 py-8 sm:py-14 px-4 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
                   >
-                    {example}
-                  </motion.button>
-                ))}
+                    <input
+                      type="file"
+                      id="images"
+                      ref={fileInputRef}
+                      className="hidden"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                    />
+                    <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+                      <ImagePlus className="h-6 w-6 text-indigo-500" />
+                    </div>
+                    <p className="text-sm text-center text-zinc-700 font-medium">
+                      Upload product or reference image
+                    </p>
+                  </motion.div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                    {images.map((img, index) => (
+                      <motion.div
+                        key={index}
+                        className="relative aspect-square border rounded-xl overflow-hidden shadow-sm group"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Image
+                          src={img}
+                          alt={`Uploaded image ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                        <button
+                          onClick={() => removeImage(index)}
+                          className="absolute top-1 right-1 p-1 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </motion.div>
+                    ))}
+                    {images.length < 4 && (
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="aspect-square border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 transition-colors"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <ImagePlus className="h-6 w-6 text-indigo-500 mb-1" />
+                        <span className="text-xs text-center text-zinc-600">
+                          Add More
+                        </span>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
               </div>
-            </div>
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="pt-2"
-            >
+              <div>
+                <Label
+                  htmlFor="prompt"
+                  className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block"
+                >
+                  <span className="flex items-center">
+                    <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
+                      2
+                    </span>
+                    Add Prompt
+                  </span>
+                </Label>
+                <Textarea
+                  id="prompt"
+                  placeholder="Describe the ad creative you want to generate..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  className="min-h-[80px] resize-none"
+                />
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {promptExamples.map((example, i) => (
+                    <Button
+                      key={i}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => setPrompt(example)}
+                    >
+                      {example}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
               <GenerateButton
                 onClick={handleGenerate}
-                disabled={images.length === 0 || !prompt}
+                disabled={images.length === 0 || !prompt || isLoading}
                 loading={isLoading}
               />
-            </motion.div>
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </AnimatedBorder>
 
-      {/* Results Modal */}
-      {generatedImages && (
+      {showResultModal && generatedImages && (
         <ResultModal
           isOpen={showResultModal}
-          onClose={() => setShowResultModal(false)}
           images={generatedImages}
+          onClose={() => setShowResultModal(false)}
           onGenerateAnother={handleGenerateAnother}
         />
       )}

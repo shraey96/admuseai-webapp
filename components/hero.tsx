@@ -6,7 +6,7 @@ import AdGenerator from "./ad-generator";
 
 export default function Hero() {
   return (
-    <div className="min-h-screen pt-16 relative overflow-hidden">
+    <div className="min-h-screen pt-20 md:pt-28 relative overflow-hidden">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-50">
         <div
@@ -18,24 +18,24 @@ export default function Hero() {
         ></div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto px-4 py-4 md:py-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start lg:items-center">
           {/* Left side - Text & Features */}
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8 pt-4">
             <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-                <span className="block">Never Create Ads Again.</span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6">
+                <span className="block mb-2">Never Create Ads Again.</span>
                 <span className="block bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 text-transparent bg-clip-text">
                   There's an AI for that.
                 </span>
               </h1>
-              <p className="text-xl text-zinc-600 max-w-xl">
+              <p className="text-lg md:text-xl text-zinc-600 max-w-xl mt-4">
                 Upload your product, add a prompt, and get professional-quality
                 ad creatives instantly. No login required.
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
                   <Sparkles className="h-4 w-4 text-indigo-600" />
@@ -66,7 +66,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative w-full max-w-xl mx-auto lg:mx-0"
           >
             <AdGenerator />
           </motion.div>

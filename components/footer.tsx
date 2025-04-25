@@ -5,17 +5,17 @@ import { motion } from "framer-motion";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-zinc-100 py-12 mt-20 bg-gradient-to-b from-white to-[#f5f5ff] bg-[url('/images/background-pattern.png')] bg-repeat">
+    <footer className="border-t border-zinc-100 py-8 md:py-12 mt-20 bg-gradient-to-b from-white to-[#f5f5ff] bg-[url('/images/background-pattern.png')] bg-repeat">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between">
           <motion.div
-            className="mb-6 md:mb-0"
+            className="text-center md:text-left mb-8 md:mb-0"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <Link href="/" className="flex items-center space-x-2">
+            <Link href="/" className="inline-flex items-center space-x-2">
               <span className="font-bold text-xl text-[#4f46e5]">AdMuseAI</span>
             </Link>
             <p className="text-zinc-500 mt-2 text-sm">
@@ -23,18 +23,19 @@ export default function Footer() {
             </p>
           </motion.div>
 
-          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-12">
+          <div className="grid grid-cols-2 gap-8 md:flex md:flex-row md:space-x-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
+              className="text-center md:text-left"
             >
-              <h3 className="font-medium text-zinc-900 mb-2">Product</h3>
+              <h3 className="font-medium text-zinc-900 mb-3">Product</h3>
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="#how-it-works"
+                    href="/#how-it-works"
                     className="text-sm text-zinc-500 hover:text-[#4f46e5] transition-colors"
                   >
                     How It Works
@@ -42,7 +43,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#examples"
+                    href="/#examples"
                     className="text-sm text-zinc-500 hover:text-[#4f46e5] transition-colors"
                   >
                     Examples
@@ -50,7 +51,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="#pricing"
+                    href="/#pricing"
                     className="text-sm text-zinc-500 hover:text-[#4f46e5] transition-colors"
                   >
                     Pricing
@@ -64,25 +65,26 @@ export default function Footer() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
+              className="text-center md:text-left"
             >
-              <h3 className="font-medium text-zinc-900 mb-2">Support</h3>
+              <h3 className="font-medium text-zinc-900 mb-3">Support</h3>
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="#faq"
+                    href="/#faq"
                     className="text-sm text-zinc-500 hover:text-[#4f46e5] transition-colors"
                   >
                     FAQ
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     href="mailto:support@admuseai.com"
                     className="text-sm text-zinc-500 hover:text-[#4f46e5] transition-colors"
                   >
                     Contact
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     href="/privacy"
@@ -106,14 +108,14 @@ export default function Footer() {
 
         <div className="border-t border-zinc-200 mt-8 pt-8 text-center text-sm text-zinc-500">
           <p>© {new Date().getFullYear()} AdMuseAI. All rights reserved.</p>
-          <div className="mt-2 flex justify-center space-x-4">
+          <div className="mt-4 flex items-center justify-center space-x-4">
             <Link
               href="/privacy"
               className="hover:text-[#4f46e5] transition-colors"
             >
               Privacy Policy
             </Link>
-            <span>•</span>
+            <span className="text-zinc-300">•</span>
             <Link
               href="/terms"
               className="hover:text-[#4f46e5] transition-colors"
