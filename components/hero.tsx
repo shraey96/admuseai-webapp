@@ -6,6 +6,13 @@ import AdGenerator from "./ad-generator";
 import { getFormattedPrice } from "@/lib/constants";
 
 export default function Hero() {
+  const scrollToExamples = () => {
+    const examplesSection = document.getElementById("examples");
+    if (examplesSection) {
+      examplesSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="min-h-screen pt-20 md:pt-28 relative overflow-hidden">
       {/* Subtle background pattern */}
@@ -27,13 +34,53 @@ export default function Hero() {
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6">
                 <span className="block mb-2">Never Create Ads Again.</span>
                 <span className="block bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 text-transparent bg-clip-text">
-                  There's an AI for that.
+                  AdMuse Does It Better.
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-zinc-600 max-w-xl mt-4">
                 Upload your product, add a prompt, and get professional-quality
                 ad creatives instantly. No login required.
               </p>
+              <motion.div
+                onClick={scrollToExamples}
+                className="mt-6 inline-flex items-center gap-2 text-lg md:text-xl font-semibold text-indigo-600 hover:text-indigo-700 transition-colors cursor-pointer"
+                whileHover={{ x: 4 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <motion.span
+                  animate={{
+                    opacity: [1, 0.8, 1],
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  ✨ View Our Ad Gallery
+                </motion.span>
+                <motion.svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  initial={{ x: 0 }}
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </motion.svg>
+              </motion.div>
             </div>
 
             <div className="space-y-3 md:space-y-4">

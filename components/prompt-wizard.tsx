@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 import {
   Dialog,
@@ -320,62 +321,83 @@ export default function PromptWizard({
                   </p>
                 )}
                 {currentStep === 1 ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    {(Object.keys(templates) as TemplateType[]).map(
-                      (templateType) => (
-                        <TooltipProvider key={templateType}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                onClick={() => {
-                                  setValues({
-                                    ...values,
-                                    template: templateType,
-                                  });
-                                  trackAnalytics(
-                                    ANALYTICS_EVENTS.PROMPT_WIZARD_TEMPLATE_CLICKED,
-                                    {
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      {(Object.keys(templates) as TemplateType[]).map(
+                        (templateType) => (
+                          <TooltipProvider key={templateType}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  onClick={() => {
+                                    setValues({
+                                      ...values,
                                       template: templateType,
-                                    }
-                                  );
-                                }}
-                                className={`
-                                w-full p-4 rounded-lg border-2 transition-all duration-200
-                                ${
-                                  values.template === templateType
-                                    ? "border-indigo-600 bg-indigo-50"
-                                    : "border-gray-200 hover:border-indigo-200"
-                                }
-                              `}
-                              >
-                                <div className="text-left">
-                                  <div className="flex items-center gap-2">
-                                    {getTemplateIcon(templateType)}
-                                    <div className="font-medium">
-                                      {getTemplateName(templateType)}
+                                    });
+                                    trackAnalytics(
+                                      ANALYTICS_EVENTS.PROMPT_WIZARD_TEMPLATE_CLICKED,
+                                      {
+                                        template: templateType,
+                                      }
+                                    );
+                                  }}
+                                  className={`
+                                  w-full p-4 rounded-lg border-2 transition-all duration-200
+                                  ${
+                                    values.template === templateType
+                                      ? "border-indigo-600 bg-indigo-50"
+                                      : "border-gray-200 hover:border-indigo-200"
+                                  }
+                                `}
+                                >
+                                  <div className="text-left">
+                                    <div className="flex items-center gap-2">
+                                      {getTemplateIcon(templateType)}
+                                      <div className="font-medium">
+                                        {getTemplateName(templateType)}
+                                      </div>
+                                    </div>
+                                    <div className="text-sm text-gray-500 mt-2">
+                                      {templateDescriptions[templateType].short}
                                     </div>
                                   </div>
-                                  <div className="text-sm text-gray-500 mt-2">
-                                    {templateDescriptions[templateType].short}
-                                  </div>
-                                </div>
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent
-                              side="top"
-                              align="center"
-                              sideOffset={5}
-                              className="bg-black text-white w-[250px] p-3"
-                            >
-                              <p className="text-sm leading-relaxed">
-                                {templateDescriptions[templateType].detailed}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )
-                    )}
-                  </div>
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="top"
+                                align="center"
+                                sideOffset={5}
+                                className="bg-black text-white w-[250px] p-3"
+                              >
+                                <p className="text-sm leading-relaxed">
+                                  {templateDescriptions[templateType].detailed}
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )
+                      )}
+                    </div>
+                    <div className="mt-4 text-center">
+                      <Link
+                        href="/prompt-writing-guidelines"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-2 flex-start"
+                        onClick={() => {
+                          trackAnalytics(
+                            ANALYTICS_EVENTS.PROMPT_WRITING_GUIDELINES_CLICKED,
+                            {
+                              source: "prompt_wizard",
+                            }
+                          );
+                        }}
+                      >
+                        <Info className="h-4 w-4" />
+                        <span>Learn more about our templates</span>
+                      </Link>
+                    </div>
+                  </>
                 ) : (
                   renderFields(currentStepData.fields)
                 )}
