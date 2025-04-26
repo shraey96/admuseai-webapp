@@ -47,7 +47,7 @@ const InfoVideo = () => {
           <div className="relative pb-[56.25%] h-0 rounded-lg overflow-hidden shadow-lg">
             <iframe
               className="absolute top-0 left-0 w-full h-full border-0"
-              src="https://www.tella.tv/video/cm9ym3ity00060blb655photf/embed?b=0&title=1&a=1&loop=0&t=0&muted=0&wt=0"
+              src="https://www.tella.tv/video/cm9ym3ity00060blb655photf/embed?b=0&title=0&a=1&loop=0&t=0&muted=0&wt=0"
               allowFullScreen
               allowTransparency
             />
