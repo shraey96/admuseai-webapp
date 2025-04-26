@@ -3,6 +3,12 @@ import { Info } from "lucide-react";
 import Image from "next/image";
 import { SAMPLE_IMAGES } from "@/constants/samples";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useState } from "react";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { getTemplateName } from "@/lib/prompt-wizard-config";
@@ -99,32 +105,42 @@ export default function ExamplePreview({
             )}
             <div className="flex gap-2 overflow-x-auto pb-4">
               {allImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  className={`relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer group ${
-                    activeImage === img.url
-                      ? "ring-2 ring-[#6366f1] ring-offset-2"
-                      : "opacity-70 hover:opacity-100"
-                  }`}
-                  onClick={() => setActiveImage(img.url)}
-                >
-                  <Image
-                    src={img.url}
-                    alt={`Image ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                  {img.isReference && (
-                    <div className="absolute top-1 right-1">
-                      <Badge
-                        variant="secondary"
-                        className="bg-black/50 text-white text-[10px] px-1.5"
+                <TooltipProvider key={idx}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={`relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer group ${
+                          activeImage === img.url
+                            ? "ring-2 ring-[#6366f1] ring-offset-2"
+                            : "opacity-70 hover:opacity-100"
+                        }`}
+                        onClick={() => setActiveImage(img.url)}
                       >
-                        REF
-                      </Badge>
-                    </div>
-                  )}
-                </div>
+                        <Image
+                          src={img.url}
+                          alt={`Image ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                        {img.isReference && (
+                          <div className="absolute top-1 right-1">
+                            <Badge
+                              variant="secondary"
+                              className="bg-black/50 text-white text-[10px] px-1.5"
+                            >
+                              REF
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                    </TooltipTrigger>
+                    {img.isReference && (
+                      <TooltipContent className="bg-black text-white">
+                        <p>Reference Image</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               ))}
             </div>
           </div>

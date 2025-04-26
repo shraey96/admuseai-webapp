@@ -15,8 +15,7 @@ const OG_IMAGE_TWITTER_PATH = OG_IMAGE_PATH;
 
 export const metadata: Metadata = {
   title: "AdMuseAI - AI-Powered Ad Creative Generator",
-  description:
-    "Generate professional-quality ad creatives instantly with AI. Upload your product, add a prompt, and get stunning ad visuals. No design skills needed, no login required. Just $2.99 per creative.",
+  description: `Generate professional-quality ad creatives with AI. Upload your product and prompt, get stunning visuals in seconds. No design skills needed. Just ${getFormattedPrice()} per creative.`,
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -91,6 +90,43 @@ export const metadata: Metadata = {
   category: "technology",
 };
 
+// Add structured data for products and FAQ
+const jsonLd = {
+  "@context": "http://schema.org",
+  "@type": "Product",
+  name: "AdMuseAI Ad Creative",
+  image: "https://admuseai.com/images/og-desktop.png",
+  description: "AI-powered ad creative generator for product ads.",
+  brand: {
+    "@type": "Brand",
+    name: "AdMuseAI",
+  },
+  offers: {
+    "@type": "Offer",
+    url: "https://admuseai.com",
+    priceCurrency: "USD",
+    price: getFormattedPrice(),
+    priceValidUntil: "2025-12-31",
+    itemCondition: "http://schema.org/NewCondition",
+    availability: "http://schema.org/InStock",
+  },
+};
+
+const faqJsonLd = {
+  "@context": "http://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How does AdMuseAI work?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "AdMuseAI allows you to upload a product image, add a descriptive prompt, and receive AI-generated ad creatives in seconds.",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -100,6 +136,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#4f46e5" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
       </head>
       <body className={inter.className}>
         <ThemeProvider

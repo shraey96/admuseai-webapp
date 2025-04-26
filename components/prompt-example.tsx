@@ -86,15 +86,18 @@ export default function PromptExample({ example }: PromptExampleProps) {
               <h3 className="text-xl font-semibold text-gray-900">
                 Template Information
               </h3>
-              <Badge
-                variant="secondary"
-                className="text-sm bg-white/80 shadow-sm"
-              >
-                {getTemplateName(example.templateUsed)}
-              </Badge>
             </div>
 
             <div className="space-y-6">
+              <div className="bg-white/60 rounded-md p-4 shadow-sm">
+                <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  Template Used
+                </h4>
+                <p className="text-base text-gray-900 leading-relaxed">
+                  {getTemplateName(example.templateUsed)}
+                </p>
+              </div>
+
               <div className="bg-white/60 rounded-md p-4 shadow-sm">
                 <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
                   Overview
@@ -151,7 +154,10 @@ export default function PromptExample({ example }: PromptExampleProps) {
                 transition={{ duration: 0.3 }}
                 className="mt-4"
               >
-                <pre className="whitespace-pre-wrap text-sm bg-white p-4 rounded border">
+                <pre
+                  className="whitespace-pre-wrap text-sm bg-white p-4 rounded border"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {example.generationPrompt}
                 </pre>
               </motion.div>

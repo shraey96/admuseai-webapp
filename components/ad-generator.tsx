@@ -140,7 +140,7 @@ export default function AdGenerator() {
         src="https://cdn.paddle.com/paddle/v2/paddle.js"
         onLoad={() => {
           if (window.Paddle) {
-            window.Paddle.Environment.set(process.env.NEXT_PUBLIC_PADDLE_ENV);
+            window.Paddle.Environment.set(process.env.PADDLE_ENV);
           }
         }}
       />
