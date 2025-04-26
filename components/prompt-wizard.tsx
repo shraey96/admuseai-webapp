@@ -38,7 +38,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 type TemplateType =
   | "product-in-environment"
   | "styled-product"
@@ -103,8 +103,16 @@ export default function PromptWizard({
   const handleNext = () => {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
+      trackAnalytics(ANALYTICS_EVENTS.PROMPT_WIZARD_CTA_CLICKED, {
+        ...values,
+        cta: "next",
+      });
     } else {
       generatePrompt();
+      trackAnalytics(ANALYTICS_EVENTS.PROMPT_WIZARD_CTA_CLICKED, {
+        ...values,
+        cta: "generate",
+      });
     }
   };
 
@@ -319,12 +327,18 @@ export default function PromptWizard({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <button
-                                onClick={() =>
+                                onClick={() => {
                                   setValues({
                                     ...values,
                                     template: templateType,
-                                  })
-                                }
+                                  });
+                                  trackAnalytics(
+                                    ANALYTICS_EVENTS.PROMPT_WIZARD_TEMPLATE_CLICKED,
+                                    {
+                                      template: templateType,
+                                    }
+                                  );
+                                }}
                                 className={`
                                 w-full p-4 rounded-lg border-2 transition-all duration-200
                                 ${

@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/#how-it-works", label: "How it works" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
+  { href: "/prompt-writing-guidelines", label: "Creative Guidelines" },
 ];
 
 export default function Header() {

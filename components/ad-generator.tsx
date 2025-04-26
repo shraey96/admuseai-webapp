@@ -259,6 +259,14 @@ export default function AdGenerator() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline"
+                        onClick={() => {
+                          trackAnalytics(
+                            ANALYTICS_EVENTS.PROMPT_WRITING_GUIDELINES_CLICKED,
+                            {
+                              source: "ad_generator",
+                            }
+                          );
+                        }}
                       >
                         Prompt Writing Guidelines
                       </a>

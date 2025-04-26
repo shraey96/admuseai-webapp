@@ -7,11 +7,11 @@ import { Search } from "lucide-react";
 import { getTemplateName } from "@/lib/prompt-wizard-config";
 import { useState } from "react";
 import ExamplePreview from "@/components/example-preview";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 export default function Examples() {
-  const examples = SAMPLE_IMAGES;
   const [selectedExample, setSelectedExample] = useState<
-    (typeof examples)[0] | null
+    (typeof SAMPLE_IMAGES)[0] | null
   >(null);
 
   const fadeInVariants = {
@@ -46,7 +46,7 @@ export default function Examples() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            {examples.map((example, index) => (
+            {SAMPLE_IMAGES.map((example, index) => (
               <motion.div
                 key={index}
                 custom={index}
@@ -56,7 +56,14 @@ export default function Examples() {
                 variants={fadeInVariants}
                 whileHover={{ y: -8, transition: { duration: 0.2 } }}
                 className="flex flex-col h-full"
-                onClick={() => setSelectedExample(example)}
+                onClick={() => {
+                  setSelectedExample(example);
+                  trackAnalytics(ANALYTICS_EVENTS.EXAMPLE_PREVIEW_OPENED, {
+                    example_type: example.adType,
+                    example_image: example.image,
+                    example_template: example.templateUsed,
+                  });
+                }}
               >
                 <div className="relative overflow-hidden rounded-xl shadow-lg h-full bg-white group cursor-pointer">
                   <div className="relative aspect-[4/3] overflow-hidden">

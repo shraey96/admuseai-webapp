@@ -1,11 +1,13 @@
-import { BASE_PROJECT_URL } from "@/constants/api";
+import { BUCKET_URL } from "@/constants/api";
+
+const SAMPLE_IMAGES_PATH = `${BUCKET_URL}/samples`;
 
 export const SAMPLE_IMAGES = [
   {
-    image: `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/cake_ad.png`,
+    image: `${SAMPLE_IMAGES_PATH}/cake_ad.png`,
     referenceImages: [
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/cake_product.png`,
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/cake_reference.png`,
+      `${SAMPLE_IMAGES_PATH}/cake_product.png`,
+      `${SAMPLE_IMAGES_PATH}/cake_reference.png`,
     ],
     headline: "Sweet Dreams are Baked Here",
     description:
@@ -14,14 +16,12 @@ export const SAMPLE_IMAGES = [
     visualStyle: "Soft Studio Lighting, Warm Tones",
     tone: "Homely, Rich, Comforting",
     generationPrompt:
-      'Create 1 ad-ready image of a product named Crusty Cakes, described as Homemade chocolate cake, that reflects the following visual aesthetic: Warm Neutrals. Maintain the product\'s proportions, label placement, and design. Do not alter the label or shape. Format: 1080x1350. Reference Image Instructions: Replace objects in the image with my product. Extra instructions: In the top right corner, add the brand name "Crusty Cakes" in a cool, stylish font. Clearly display the price "$25" in a tasteful, modern way that fits the design. The overall feel should be clean, premium, and appealing—perfect for showcasing a handcrafted dessert. Result: https://eglwedwlixqeqiteygec.supabase.co/storage/v1/object/public/ai-generated-ads/ad-generation/results/15851b20-541d-4f78-bb4f-ba4bfa5a5e5d-generated-ad-1.png',
+      'Create 1 ad-ready image of a product named Crusty Cakes, described as Homemade chocolate cake, that reflects the following visual aesthetic: Warm Neutrals. Maintain the product\'s proportions, label placement, and design. Do not alter the label or shape. Format: 1080x1350. Reference Image Instructions: Replace objects in the image with my product. Extra instructions: In the top right corner, add the brand name "Crusty Cakes" in a cool, stylish font. Clearly display the price "$25" in a tasteful, modern way that fits the design. The overall feel should be clean, premium, and appealing—perfect for showcasing a handcrafted dessert.',
     templateUsed: "styled-product",
   },
   {
-    image: `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/pearl_ad.png`,
-    referenceImages: [
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/pearl_product.png`,
-    ],
+    image: `${SAMPLE_IMAGES_PATH}/pearl_ad.png`,
+    referenceImages: [`${SAMPLE_IMAGES_PATH}/pearl_product.png`],
     headline: "Timeless. Graceful. You.",
     description:
       "Celebrate your elegance with Pekky Pearls — where beauty meets sophistication.",
@@ -33,10 +33,10 @@ export const SAMPLE_IMAGES = [
     templateUsed: "product-with-person",
   },
   {
-    image: `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/soda_ad.png`,
+    image: `${SAMPLE_IMAGES_PATH}/soda_ad.png`,
     referenceImages: [
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/soda_product.png`,
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/soda_reference.png`,
+      `${SAMPLE_IMAGES_PATH}/soda_product.png`,
+      `${SAMPLE_IMAGES_PATH}/soda_reference.png`,
     ],
     headline: "Pop Open the Joy!",
     description:
@@ -49,10 +49,8 @@ export const SAMPLE_IMAGES = [
     templateUsed: "product-in-environment",
   },
   {
-    image: `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/skincare_ad.png`,
-    referenceImages: [
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/skincare_product.png`,
-    ],
+    image: `${SAMPLE_IMAGES_PATH}/skincare_ad.png`,
+    referenceImages: [`${SAMPLE_IMAGES_PATH}/skincare_product.png`],
     headline: "Softness, Bottled.",
     description:
       "Experience the gentle care of MEHU — natural skincare essentials for everyday radiance.",
@@ -64,9 +62,10 @@ export const SAMPLE_IMAGES = [
     templateUsed: "product-in-environment",
   },
   {
-    image: `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/shoes_ad.png`,
+    image: `${SAMPLE_IMAGES_PATH}/shoes_ad.png`,
     referenceImages: [
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/shoes_reference.png`,
+      `${SAMPLE_IMAGES_PATH}/shoes_product.png`,
+      `${SAMPLE_IMAGES_PATH}/shoes_reference.png`,
     ],
     headline: "Move Bold. Wear XY.",
     description:
@@ -79,10 +78,10 @@ export const SAMPLE_IMAGES = [
     templateUsed: "custom-prompt",
   },
   {
-    image: `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/perfume_ad.png`,
+    image: `${SAMPLE_IMAGES_PATH}/perfume_ad.png`,
     referenceImages: [
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/perfume_reference.png`,
-      `${BASE_PROJECT_URL}/storage/v1/object/public/ai-generated-ads/ad-generation/samples/perfume_reference_1.png`,
+      `${SAMPLE_IMAGES_PATH}/perfume_reference.png`,
+      `${SAMPLE_IMAGES_PATH}/perfume_reference_1.png`,
     ],
     headline: "Luxury in Every Breath.",
     description:

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { SAMPLE_IMAGES } from "@/constants/samples";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 interface ExamplePreviewProps {
   example: (typeof SAMPLE_IMAGES)[0];
   onClose: () => void;
@@ -75,9 +75,23 @@ export default function ExamplePreview({
                 <Info className="h-5 w-5 text-[#6366f1] mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-[#4338ca]">
                   <p>
-                    These reference images were used to guide the AI in
-                    generating the final result. They helped establish the
-                    desired style, composition, and visual elements.
+                    Want to create amazing ads like this?{" "}
+                    <a
+                      href="/prompt-writing-guidelines"
+                      className="underline hover:text-[#6366f1] transition-colors"
+                      target="_blank"
+                      onClick={() => {
+                        trackAnalytics(
+                          ANALYTICS_EVENTS.PROMPT_WRITING_GUIDELINES_CLICKED,
+                          {
+                            source: "example_preview",
+                          }
+                        );
+                      }}
+                    >
+                      Learn how to write effective ad prompts
+                    </a>
+                    .
                   </p>
                 </div>
               </div>

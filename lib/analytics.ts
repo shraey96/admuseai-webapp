@@ -16,11 +16,22 @@ export const ANALYTICS_EVENTS = {
 
   PROMPT_WIZARD_OPENED: "Prompt Wizard Opened",
 
+  PROMPT_WIZARD_TEMPLATE_CLICKED: "Prompt Wizard Template Clicked",
+
+  PROMPT_WIZARD_CTA_CLICKED: "Prompt Wizard CTA Clicked",
+
   GENERATE_AD_CLICKED: "Generate Ad Clicked",
 
   GENERATE_AD_CLICKED_AGAIN: "Generate Ad Again Clicked",
 
   DOWNLOAD_AD_CLICKED: "Download Ad Clicked",
+
+  EXAMPLE_PREVIEW_OPENED: "Example Preview Opened",
+
+  PROMPT_WRITING_GUIDELINES_CLICKED: "Prompt Writing Guidelines Clicked",
+
+  PROMPT_WRITING_GUIDELINES_TAB_CLICKED:
+    "Prompt Writing Guidelines Tab Clicked",
 };
 
 export const trackAnalytics = (eventName = "", config = {}) => {
