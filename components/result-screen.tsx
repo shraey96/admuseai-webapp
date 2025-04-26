@@ -161,7 +161,7 @@ export default function ResultScreen({
               <p>
                 All image links have been copied to your clipboard. Images are
                 available for 24 hours only - please download them before
-                leaving.
+                leaving. You will NOT be emailed the images.
               </p>
             </div>
           </div>

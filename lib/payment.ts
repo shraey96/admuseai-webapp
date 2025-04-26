@@ -34,8 +34,10 @@ export function initPayment(
             email: data.customer.email,
           });
 
-          // Close the checkout window
-          window.Paddle.Checkout.close();
+          setTimeout(() => {
+            // Close the checkout window
+            window.Paddle.Checkout.close();
+          }, 0);
         } else if (
           data.event === "checkout.closed" &&
           !data.checkout?.completed

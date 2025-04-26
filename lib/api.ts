@@ -47,6 +47,7 @@ export async function generateAdCreative(
     const response = await fetch(`${FUNCTIONS_URL}/generate-gpt-images`, {
       method: "POST",
       body: formData,
+      signal: AbortSignal.timeout(300000),
     });
 
     if (!response.ok) {
@@ -81,6 +82,11 @@ export async function generateAdCreative(
     }
   } catch (error) {
     console.error("Error generating ad creative:", error);
+
+    // Log specific timeout error
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error("API request timed out after 5 minutes");
+    }
 
     // Extract detailed error message if available
     const errorMessage =

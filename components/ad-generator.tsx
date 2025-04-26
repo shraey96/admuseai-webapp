@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -75,7 +75,6 @@ export default function AdGenerator() {
         "user-" + Date.now()
       );
 
-      console.log(transactionId, email);
       // Show generation screen
       setStage("generating");
 
