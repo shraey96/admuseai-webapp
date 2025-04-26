@@ -7,6 +7,7 @@ import Features from "@/components/features";
 import Examples from "@/components/examples";
 import Pricing from "@/components/pricing";
 import FAQ from "@/components/faq";
+import InfoVideo from "@/components/InfoVideo";
 import BackgroundWrapper from "./components/BackgroundWrapper";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { useEffect } from "react";
@@ -25,6 +26,10 @@ export default function Home() {
           <Suspense fallback={<div>Loading...</div>}>
             <Hero />
           </Suspense>
+        </BackgroundWrapper>
+
+        <BackgroundWrapper variant="default">
+          <InfoVideo />
         </BackgroundWrapper>
 
         <BackgroundWrapper variant="default">
