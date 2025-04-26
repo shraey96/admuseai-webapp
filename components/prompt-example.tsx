@@ -5,6 +5,10 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import {
+  getTemplateName,
+  templateDescriptions,
+} from "@/lib/prompt-wizard-config";
 
 interface PromptExampleProps {
   example: {
@@ -75,6 +79,59 @@ export default function PromptExample({ example }: PromptExampleProps) {
           <div>
             <h3 className="font-semibold text-lg mb-2">{example.headline}</h3>
             <p className="text-zinc-600">{example.description}</p>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <h3 className="text-xl font-semibold text-gray-900">
+                Template Information
+              </h3>
+              <Badge
+                variant="secondary"
+                className="text-sm bg-white/80 shadow-sm"
+              >
+                {getTemplateName(example.templateUsed)}
+              </Badge>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-white/60 rounded-md p-4 shadow-sm">
+                <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  Overview
+                </h4>
+                <p className="text-base text-gray-900 leading-relaxed">
+                  {templateDescriptions[example.templateUsed].short}
+                </p>
+              </div>
+
+              <div className="bg-white/60 rounded-md p-4 shadow-sm">
+                <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  Details
+                </h4>
+                <p className="text-base text-gray-900 leading-relaxed">
+                  {templateDescriptions[example.templateUsed].detailed}
+                </p>
+              </div>
+
+              <div className="bg-white/60 rounded-md p-4 shadow-sm">
+                <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  Best Use Cases
+                </h4>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {templateDescriptions[example.templateUsed].useCases.map(
+                    (useCase, index) => (
+                      <li
+                        key={index}
+                        className="flex items-start gap-2 text-gray-900"
+                      >
+                        <span className="text-primary mt-1">•</span>
+                        <span>{useCase}</span>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </div>
+            </div>
           </div>
 
           <div

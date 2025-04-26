@@ -5,6 +5,7 @@ import { SAMPLE_IMAGES } from "@/constants/samples";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
+import { getTemplateName } from "@/lib/prompt-wizard-config";
 interface ExamplePreviewProps {
   example: (typeof SAMPLE_IMAGES)[0];
   onClose: () => void;
@@ -140,8 +141,12 @@ export default function ExamplePreview({
               <p className="text-gray-600">{example.tone}</p>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 mb-1">Template</h4>
-              <p className="text-gray-600">{example.adType}</p>
+              <h4 className="font-semibold text-gray-900 mb-1">
+                Template Used
+              </h4>
+              <p className="text-gray-600">
+                {getTemplateName(example.templateUsed)}
+              </p>
             </div>
           </div>
         </div>

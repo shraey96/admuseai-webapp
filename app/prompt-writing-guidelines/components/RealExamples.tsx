@@ -1,6 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { ImageIcon, Palette, Box, Layers } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import PromptExample from "@/components/prompt-example";
 import { SAMPLE_IMAGES } from "@/constants/samples";

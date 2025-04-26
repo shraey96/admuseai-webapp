@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getFormattedPrice } from "@/lib/constants";
 
 interface GenerateButtonProps {
   onClick: () => void;
@@ -25,7 +26,7 @@ export default function GenerateButton({
         <Button className="w-full py-4 rounded-xl text-base font-medium h-auto">
           <span className="flex items-center justify-center">
             <Sparkles className="mr-2 h-4 w-4" />
-            <span>Generate My Ad - $2.99</span>
+            <span>Generate My Ad - {getFormattedPrice()}</span>
           </span>
         </Button>
       </div>
@@ -80,7 +81,7 @@ export default function GenerateButton({
                 }}
                 className="overflow-hidden block"
               >
-                - $2.99
+                - {getFormattedPrice()}
               </motion.span>
             )}
           </AnimatePresence>

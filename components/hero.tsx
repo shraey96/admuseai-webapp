@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import AdGenerator from "./ad-generator";
+import { getFormattedPrice } from "@/lib/constants";
 
 export default function Hero() {
   return (
@@ -55,7 +56,7 @@ export default function Hero() {
                   <Sparkles className="h-4 w-4 text-indigo-600" />
                 </div>
                 <span className="text-zinc-700">
-                  Just $2.99 per ad creative
+                  Just {getFormattedPrice()} per ad creative
                 </span>
               </div>
             </div>

@@ -69,29 +69,70 @@ interface TemplateConfig {
 // Template descriptions
 export const templateDescriptions: Record<
   string,
-  { short: string; detailed: string }
+  { short: string; detailed: string; useCases: string[] }
 > = {
   "product-in-environment": {
     short:
       "Showcase your product in a styled environment with real-world context.",
     detailed:
       "Perfect for lifestyle shots that place your product in a real-world context, highlighting its use and aesthetic appeal in carefully curated environments.",
+    useCases: [
+      "Home decor items in styled living spaces",
+      "Skincare products on bathroom vanities",
+      "Kitchen appliances in modern kitchens",
+      "Wellness products in spa-like settings",
+      "Luxury items in high-end environments",
+    ],
   },
   "styled-product": {
     short:
       "Focus on your product with artistic flair in a professional setting.",
     detailed:
       "Ideal for highlighting product details, textures, and design elements in a clean, professional setting. Best for showcasing premium products and their unique features.",
+    useCases: [
+      "Luxury beauty products with premium finishes",
+      "High-end fashion accessories",
+      "Artisanal food and beverage products",
+      "Designer home goods",
+      "Premium tech accessories",
+    ],
   },
   "product-with-person": {
     short: "Show how customers interact with your product in real scenarios.",
     detailed:
       "Great for showing how customers interact with your product, creating relatable and engaging marketing content. Perfect for demonstrating product usage and building trust.",
+    useCases: [
+      "Skincare products being applied",
+      "Fitness equipment in use",
+      "Fashion items being worn",
+      "Beauty tools in action",
+      "Wellness products during daily routines",
+    ],
   },
   "flat-lay": {
     short: "Create an organized, top-down arrangement of your products.",
     detailed:
       "Perfect for showcasing product collections, bundles, or multiple items in a clean, Instagram-worthy layout. Ideal for product sets and visual storytelling.",
+    useCases: [
+      "Product bundles and gift sets",
+      "Skincare routines and collections",
+      "Fashion accessories and jewelry sets",
+      "Food and beverage pairings",
+      "Home decor collections",
+    ],
+  },
+  "custom-prompt": {
+    short:
+      "Create a completely customized image with your own specific requirements.",
+    detailed:
+      "Perfect for when you need complete control over the image generation process. This template allows you to specify every detail of your desired image, from composition and lighting to specific elements and mood. Ideal for unique or complex scenarios that don't fit into standard templates.",
+    useCases: [
+      "Unique product presentations that don't fit standard templates",
+      "Complex scenes with multiple products or elements",
+      "Specific artistic or creative directions",
+      "Custom brand-specific visual requirements",
+      "Experimental or innovative marketing concepts",
+    ],
   },
 };
 

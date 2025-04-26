@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { getFormattedPrice } from "@/lib/constants";
 
 export default function Pricing() {
   return (
@@ -36,7 +37,9 @@ export default function Pricing() {
                 Single Ad Creative
               </CardTitle>
               <CardDescription>Perfect for one-off projects</CardDescription>
-              <div className="mt-4 text-4xl font-bold text-zinc-900">$2.99</div>
+              <div className="mt-4 text-4xl font-bold text-zinc-900">
+                {getFormattedPrice()}
+              </div>
             </CardHeader>
             <CardContent className="relative z-10 pt-4">
               <ul className="space-y-3">

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/footer";
+import { getFormattedPrice } from "@/lib/constants";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,8 +47,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     title: "AdMuseAI - Generate Professional Ad Creatives Instantly with AI",
-    description:
-      "Transform your product images into stunning ad creatives with AI. Professional results in seconds, no design skills needed. Just $2.99 per creative.",
+    description: `Transform your product images into stunning ad creatives with AI. Professional results in seconds, no design skills needed. Just ${getFormattedPrice()} per creative.`,
     url: "https://admuseai.com",
     siteName: "AdMuseAI",
     images: [
