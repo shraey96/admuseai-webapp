@@ -20,6 +20,7 @@ import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import ConfettiPortal from "./ui/confetti-portal";
 
 import PromptWizard from "./prompt-wizard";
+import ImageUploader from "./image-uploader";
 
 type Stage = "upload" | "generating" | "result";
 
@@ -36,25 +37,7 @@ export default function AdGenerator() {
   const [showConfetti, setShowConfetti] = useState(false);
 
   const [isWizardOpen, setIsWizardOpen] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      Array.from(files).forEach((file) => {
-        // Create a local blob URL for the file
-        const objectUrl = URL.createObjectURL(file);
-        if (images.length < 4) {
-          setImages((prev) => [...prev, objectUrl]);
-        }
-      });
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
 
   const handleGenerate = async () => {
     if (images.length === 0 || !prompt) return;
@@ -182,86 +165,7 @@ export default function AdGenerator() {
             </div>
 
             <div className="space-y-4 sm:space-y-6">
-              <div>
-                <Label
-                  htmlFor="images"
-                  className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block"
-                >
-                  <span className="flex items-center">
-                    <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
-                      1
-                    </span>
-                    Upload Images{" "}
-                    <span className="text-xs text-zinc-500 ml-2">
-                      ({images.length}/4)
-                    </span>
-                  </span>
-                </Label>
-
-                {/* Always render the hidden file input so fileInputRef is always mounted */}
-                <input
-                  type="file"
-                  id="images"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                />
-                {images.length === 0 ? (
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 py-8 sm:py-14 px-4 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
-                      <ImagePlus className="h-6 w-6 text-indigo-500" />
-                    </div>
-                    <p className="text-sm text-center text-zinc-700 font-medium">
-                      Upload product or reference image
-                    </p>
-                  </motion.div>
-                ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                    {images.map((img, index) => (
-                      <motion.div
-                        key={index}
-                        className="relative aspect-square border rounded-xl overflow-hidden shadow-sm group"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Image
-                          src={img}
-                          alt={`Uploaded image ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                        <button
-                          onClick={() => removeImage(index)}
-                          className="absolute top-1 right-1 p-1 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </motion.div>
-                    ))}
-                    {images.length < 4 && (
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="aspect-square border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 transition-colors"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        <ImagePlus className="h-6 w-6 text-indigo-500 mb-1" />
-                        <span className="text-xs text-center text-zinc-600">
-                          Add More
-                        </span>
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <ImageUploader images={images} onImagesChange={setImages} />
 
               <div>
                 <Label className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block">
