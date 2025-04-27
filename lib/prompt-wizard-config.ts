@@ -45,6 +45,7 @@ interface CreatableSelectField extends BaseField {
 interface RadioField extends BaseField {
   type: "radio";
   options: FieldOption[];
+  disabled?: boolean;
 }
 
 type Field =
@@ -186,6 +187,7 @@ export const globalSteps: Step[] = [
         label: "Orientation",
         name: "orientation",
         type: "radio",
+        disabled: true,
         options: [
           { label: "Portrait (1024x1536)", value: "portrait" },
           { label: "Landscape (1536x1024)", value: "landscape" },
@@ -339,7 +341,7 @@ ${values.decor1 ? `– ${values.decor1}\n` : ""}${
         values.colorTexture ? `– ${values.colorTexture}` : ""
       }
 The product should be the hero of the image. Format: ${
-        values.orientation === "portrait" ? "1080x1350" : "1350x1080"
+        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
       }.`;
     },
   },
@@ -414,7 +416,7 @@ The product should be the hero of the image. Format: ${
         values.productDescription
       }, that reflects the following visual aesthetic: ${values.shootingStyle}.
 Maintain the product's proportions, label placement, and design. Do not alter the label or shape. Format: ${
-        values.orientation === "portrait" ? "1080x1350" : "1350x1080"
+        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
       }.`;
     },
   },
@@ -555,7 +557,7 @@ ${
     : ""
 }
 Keep proportions and label accuracy true to the original. Format: ${
-        values.orientation === "portrait" ? "1080x1350" : "1350x1080"
+        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
       }.`;
     },
   },
@@ -658,7 +660,7 @@ Keep proportions and label accuracy true to the original. Format: ${
     ],
     generatePrompt: (values) => {
       return `Create a ${
-        values.orientation === "portrait" ? "1080x1350" : "1350x1080"
+        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
       } static ad image for ${
         values.productName
       } featuring a flat-lay arrangement of a curated ${

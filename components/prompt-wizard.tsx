@@ -193,6 +193,7 @@ export default function PromptWizard({
             value={value}
             onValueChange={handleChange}
             className="flex gap-4 mt-2"
+            disabled={field.disabled}
           >
             {field.options.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
