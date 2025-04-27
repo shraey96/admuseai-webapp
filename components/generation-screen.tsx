@@ -55,7 +55,7 @@ export default function GenerationScreen() {
                 className="h-full rounded-full bg-indigo-500"
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
-                transition={{ duration: 20, ease: "linear" }}
+                transition={{ duration: 90, ease: "linear" }}
               />
             </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,7 @@ import Script from "next/script";
 import { initPayment } from "@/lib/payment";
 import AnimatedBorder from "@/components/animated-border";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
-import ReactConfetti from "react-confetti";
+import ConfettiPortal from "./ui/confetti-portal";
 
 import PromptWizard from "./prompt-wizard";
 
@@ -34,13 +34,10 @@ export default function AdGenerator() {
   const [error, setError] = useState<string | null>(null);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [windowDimensions] = useState(() => ({
-    width: typeof window !== "undefined" ? window.innerWidth : 1000,
-    height: typeof window !== "undefined" ? window.innerHeight : 800,
-  }));
 
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -108,7 +105,10 @@ export default function AdGenerator() {
         setShowResultModal(true);
         // Start confetti celebration
         setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 5000); // Stop after 5 seconds
+        if (confettiTimeoutRef.current) {
+          clearTimeout(confettiTimeoutRef.current);
+        }
+        confettiTimeoutRef.current = setTimeout(() => removeConfetti(), 3000); // Stop after 5 seconds
       } else {
         throw new Error(result.error || "Failed to generate ad");
       }
@@ -142,6 +142,15 @@ export default function AdGenerator() {
     setGeneratedImages(null);
     setError(null);
     setShowResultModal(false);
+    removeConfetti();
+  };
+
+  const removeConfetti = () => {
+    if (confettiTimeoutRef.current) {
+      clearTimeout(confettiTimeoutRef.current);
+      confettiTimeoutRef.current = null;
+    }
+    setShowConfetti(false);
   };
 
   const handlePromptGenerated = (generatedPrompt: string) => {
@@ -154,15 +163,6 @@ export default function AdGenerator() {
 
   return (
     <>
-      {showConfetti && (
-        <ReactConfetti
-          width={windowDimensions.width}
-          height={windowDimensions.height}
-          recycle={false}
-          numberOfPieces={200}
-          gravity={0.3}
-        />
-      )}
       <Script
         src="https://cdn.paddle.com/paddle/v2/paddle.js"
         onLoad={() => {
@@ -338,7 +338,10 @@ export default function AdGenerator() {
         <ResultModal
           isOpen={showResultModal}
           images={generatedImages}
-          onClose={() => setShowResultModal(false)}
+          onClose={() => {
+            setShowResultModal(false);
+            removeConfetti();
+          }}
           onGenerateAnother={handleGenerateAnother}
         />
       )}
@@ -348,6 +351,8 @@ export default function AdGenerator() {
         onClose={() => setIsWizardOpen(false)}
         onPromptGenerated={handlePromptGenerated}
       />
+
+      <ConfettiPortal show={showConfetti} />
     </>
   );
 }
