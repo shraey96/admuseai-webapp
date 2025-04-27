@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -17,10 +17,13 @@ import Script from "next/script";
 import { initPayment } from "@/lib/payment";
 import AnimatedBorder from "@/components/animated-border";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
+import ReactConfetti from "react-confetti";
 
 import PromptWizard from "./prompt-wizard";
 
 type Stage = "upload" | "generating" | "result";
+
+const IS_FREE = true;
 
 export default function AdGenerator() {
   const [stage, setStage] = useState<Stage>("upload");
@@ -30,6 +33,11 @@ export default function AdGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showResultModal, setShowResultModal] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowDimensions] = useState(() => ({
+    width: typeof window !== "undefined" ? window.innerWidth : 1000,
+    height: typeof window !== "undefined" ? window.innerHeight : 800,
+  }));
 
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,10 +78,18 @@ export default function AdGenerator() {
 
     try {
       // Initialize payment
-      const { transactionId, email } = await initPayment(
-        "user@admuseai.com", // In a real app, this would be the user's email
-        "user-" + Date.now()
-      );
+      const uid = "user-" + Date.now();
+      let transactionId = `t_${uid}`;
+      let email = `${uid}@admuseai.com`;
+
+      if (!IS_FREE) {
+        const result = await initPayment(
+          "user@admuseai.com", // In a real app, this would be the user's email
+          "user-" + Date.now()
+        );
+        transactionId = result.transactionId;
+        email = result.email;
+      }
 
       // Show generation screen
       setStage("generating");
@@ -90,6 +106,9 @@ export default function AdGenerator() {
         setGeneratedImages(result.imageUrls);
         setStage("upload"); // Return to upload stage, but show modal
         setShowResultModal(true);
+        // Start confetti celebration
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 5000); // Stop after 5 seconds
       } else {
         throw new Error(result.error || "Failed to generate ad");
       }
@@ -135,6 +154,15 @@ export default function AdGenerator() {
 
   return (
     <>
+      {showConfetti && (
+        <ReactConfetti
+          width={windowDimensions.width}
+          height={windowDimensions.height}
+          recycle={false}
+          numberOfPieces={200}
+          gravity={0.3}
+        />
+      )}
       <Script
         src="https://cdn.paddle.com/paddle/v2/paddle.js"
         onLoad={() => {
