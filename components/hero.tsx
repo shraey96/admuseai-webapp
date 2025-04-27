@@ -103,7 +103,13 @@ export default function Hero() {
                   <Sparkles className="h-4 w-4 text-indigo-600" />
                 </div>
                 <span className="text-zinc-700">
-                  Just {getFormattedPrice()} per ad creative
+                  <span className="line-through">
+                    Just {getFormattedPrice()} per ad creative
+                  </span>{" "}
+                  -{" "}
+                  <span className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-transparent bg-clip-text font-semibold animate-pulse">
+                    Free for a limited time
+                  </span>
                 </span>
               </div>
             </div>
