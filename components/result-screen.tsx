@@ -58,7 +58,9 @@ export default function ResultScreen({
       currentImage,
       `admuseai-creative-${activeIndex + 1}-${Date.now()}.png`
     );
-    trackAnalytics(ANALYTICS_EVENTS.DOWNLOAD_AD_CLICKED);
+    trackAnalytics(ANALYTICS_EVENTS.DOWNLOAD_AD_CLICKED, {
+      image_url: currentImage,
+    });
   };
 
   return (
