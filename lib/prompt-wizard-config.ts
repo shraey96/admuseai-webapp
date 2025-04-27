@@ -205,7 +205,8 @@ export const finalFields: Field[] = [
     type: "textarea",
     optional: true,
     placeholder: "Add any additional instructions or requirements",
-    tooltip: "Optional additional instructions for the image generation",
+    tooltip:
+      "Add any specific details not covered in previous steps. Examples: specific camera angles, additional props, color adjustments, or any other creative direction you'd like to include in the image generation.",
     rows: 4,
   },
 ];
