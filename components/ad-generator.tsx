@@ -46,6 +46,8 @@ export default function AdGenerator() {
 
     const isPaddleReady = typeof window !== "undefined" && window.Paddle;
 
+    setError(null);
+
     if (!isPaddleReady) {
       toast({
         title: "Payment System Loading",
