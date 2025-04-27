@@ -198,6 +198,16 @@ export default function AdGenerator() {
                   </span>
                 </Label>
 
+                {/* Always render the hidden file input so fileInputRef is always mounted */}
+                <input
+                  type="file"
+                  id="images"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                />
                 {images.length === 0 ? (
                   <motion.div
                     whileHover={{ scale: 1.02 }}
@@ -205,15 +215,6 @@ export default function AdGenerator() {
                     className="border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 py-8 sm:py-14 px-4 transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <input
-                      type="file"
-                      id="images"
-                      ref={fileInputRef}
-                      className="hidden"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageUpload}
-                    />
                     <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
                       <ImagePlus className="h-6 w-6 text-indigo-500" />
                     </div>
