@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { ImagePlus, X } from "lucide-react";
-import Image from "next/image";
-import { motion } from "framer-motion";
 import GenerationScreen from "./generation-screen";
 import ResultModal from "./result-modal";
 import GenerateButton from "./ui/generate-button";
@@ -42,7 +39,9 @@ export default function AdGenerator() {
   const handleGenerate = async () => {
     if (images.length === 0 || !prompt) return;
 
-    trackAnalytics(ANALYTICS_EVENTS.GENERATE_AD_CLICKED);
+    trackAnalytics(ANALYTICS_EVENTS.GENERATE_AD_CLICKED, {
+      prompt,
+    });
 
     const isPaddleReady = typeof window !== "undefined" && window.Paddle;
 
