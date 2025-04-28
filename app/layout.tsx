@@ -7,6 +7,7 @@ import Header from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/footer";
 import { getFormattedPrice } from "@/lib/constants";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -146,17 +147,19 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          {children}
-          <Footer />
+        <TooltipProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            {children}
+            <Footer />
+          </ThemeProvider>
           <Toaster />
-        </ThemeProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

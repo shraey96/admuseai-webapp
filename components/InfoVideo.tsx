@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const InfoVideo = () => {
   return (
-    <section className="py-16 bg-gray-50">
+    <section id="info-video" className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <motion.h3

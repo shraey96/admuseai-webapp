@@ -15,6 +15,7 @@ import { initPayment } from "@/lib/payment";
 import AnimatedBorder from "@/components/animated-border";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import ConfettiPortal from "./ui/confetti-portal";
+import CopyrightNotice from "./copyright-notice";
 
 import PromptWizard from "./prompt-wizard";
 import ImageUploader from "./image-uploader";
@@ -186,7 +187,8 @@ export default function AdGenerator() {
                       onChange={(e) => setPrompt(e.target.value)}
                       className="min-h-[120px] resize-none"
                     />
-                    <div className="mt-1.5 text-right">
+                    <div className="mt-1.5 flex justify-between items-center">
+                      {/* <CopyrightNotice isTooltip /> */}
                       <a
                         href="/prompt-writing-guidelines"
                         target="_blank"

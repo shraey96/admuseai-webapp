@@ -13,6 +13,13 @@ export default function Hero() {
     }
   };
 
+  const scrollToInfoVideo = () => {
+    const infoVideoSection = document.getElementById("info-video");
+    if (infoVideoSection) {
+      infoVideoSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="min-h-screen pt-20 md:pt-28 relative overflow-hidden">
       {/* Subtle background pattern */}
@@ -112,6 +119,15 @@ export default function Hero() {
                   </span>
                 </span>
               </div>
+              <motion.button
+                onClick={scrollToInfoVideo}
+                className="mt-4 w-fit font-bold text-lg flex items-center gap-2 text-indigo-700 hover:text-indigo-900 transition-colors cursor-pointer animate-pulse"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <span className="text-xl animate-pulse">▶️</span>
+                <span className="animate-pulse">Watch how it works!</span>
+              </motion.button>
             </div>
           </div>
 
