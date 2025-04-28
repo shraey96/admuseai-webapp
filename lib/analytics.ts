@@ -32,6 +32,8 @@ export const ANALYTICS_EVENTS = {
 
   PROMPT_WRITING_GUIDELINES_TAB_CLICKED:
     "Prompt Writing Guidelines Tab Clicked",
+
+  GIVE_FEEDBACK_CLICKED: "Give Feedback Clicked",
 };
 
 export const trackAnalytics = (eventName = "", config = {}) => {

@@ -197,6 +197,43 @@ export default function ResultScreen({
             </Button>
           </motion.div>
         </motion.div>
+        {/* Feedback Button */}
+        <motion.div
+          className="mt-4 flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <Button
+            variant="outline"
+            className="border-[#6366f1] text-[#6366f1] hover:bg-[#6366f1]/10 rounded-xl py-2 px-6 flex items-center gap-2 font-semibold shadow-sm"
+            onClick={() => {
+              trackAnalytics(ANALYTICS_EVENTS.GIVE_FEEDBACK_CLICKED);
+              window.open("https://tally.so/r/wLVg1J", "_blank");
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 20.25c4.97 0 9-2.686 9-6V7.5c0-3.314-4.03-6-9-6s-9 2.686-9 6v6.75c0 3.314 4.03 6 9 6Z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 10.5l3 3 4.5-4.5"
+              />
+            </svg>
+            Give Feedback
+          </Button>
+        </motion.div>
       </div>
     </div>
   );
