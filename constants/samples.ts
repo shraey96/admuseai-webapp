@@ -93,4 +93,17 @@ export const SAMPLE_IMAGES = [
       'Create a classy advertisement image showcasing a black car perfume bottle labeled "Exotica" with a sleek, luxurious design and a golden top. The bottle should be clipped ontop of the AC vent of a Mercedes-Benz interior (use the attached car interior as reference). Take inspiration from the shape and aesthetic of the third reference bottle image to guide the look and elegance of the design. The setting should feel premium and sophisticated, with realistic lighting that highlights the texture of the bottle and the elegance of the Mercedes dashboard.',
     templateUsed: "custom-prompt",
   },
+  {
+    image: `${SAMPLE_IMAGES_PATH}/home_ad.png`,
+    referenceImages: [`${SAMPLE_IMAGES_PATH}/home_product.jpeg`],
+    headline: "Modern Elegance at its Best",
+    description:
+      "Imagine this bright, open space with your personal touch. Stylish furniture and a serene atmosphere await.",
+    adType: "Styled-Product",
+    visualStyle: "Soft Lighting, Clean Design",
+    tone: "Elegant, Fresh, Bright",
+    generationPrompt:
+      "Create 1 ad-ready image of a product named Modern Elegance, described as a bright, open living room with neutral tones and natural light, that reflects the following visual aesthetic: Clean and Elegant. Maintain the room’s proportions, layout, and structure. Do not alter any existing features such as windows, walls, or flooring. Format: 1080x1350. Reference Image Instructions: Add contemporary furniture and decor that complements the room’s airy, light-filled atmosphere. Extra instructions: Use soft lighting to create a refined, elegant feel.",
+    templateUsed: "styled-product",
+  },
 ];
