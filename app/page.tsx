@@ -11,6 +11,7 @@ import InfoVideo from "@/components/InfoVideo";
 import BackgroundWrapper from "./components/BackgroundWrapper";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { useEffect } from "react";
+import AdGeneratorSection from "@/components/ad-generator-section";
 
 export default function Home() {
   useEffect(() => {
@@ -26,6 +27,10 @@ export default function Home() {
           <Suspense fallback={<div>Loading...</div>}>
             <Hero />
           </Suspense>
+        </BackgroundWrapper>
+
+        <BackgroundWrapper variant="default">
+          <AdGeneratorSection />
         </BackgroundWrapper>
 
         <BackgroundWrapper variant="default">

@@ -1,24 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
-import AdGenerator from "./ad-generator";
+import { Sparkles, Play } from "lucide-react";
 import { getFormattedPrice } from "@/lib/constants";
+import MediaScroller from "./media-scroller";
+import {
+  HERO_SAMPLES_LEFT,
+  HERO_SAMPLES_RIGHT,
+} from "@/constants/hero-samples";
+import { scrollToElement } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 export default function Hero() {
-  const scrollToExamples = () => {
-    const examplesSection = document.getElementById("examples");
-    if (examplesSection) {
-      examplesSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  const scrollToInfoVideo = () => {
-    const infoVideoSection = document.getElementById("info-video");
-    if (infoVideoSection) {
-      infoVideoSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const isMobile = useIsMobile();
 
   return (
     <div className="min-h-screen pt-20 md:pt-28 relative overflow-hidden">
@@ -34,9 +29,9 @@ export default function Hero() {
       </div>
 
       <div className="container mx-auto px-4 py-4 md:py-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start lg:items-center">
+        <div className="grid grid-cols-12 gap-8">
           {/* Left side - Text & Features */}
-          <div className="space-y-6 md:space-y-8 pt-4">
+          <div className="col-span-12 lg:col-span-6 space-y-6 md:space-y-8 pt-4">
             <div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6">
                 <span className="block mb-2">Never Create Ads Again.</span>
@@ -48,46 +43,6 @@ export default function Hero() {
                 Upload your product, add a prompt, and get professional-quality
                 ad creatives instantly. No login required.
               </p>
-              <motion.div
-                onClick={scrollToExamples}
-                className="mt-6 inline-flex items-center gap-2 text-lg md:text-xl font-semibold text-indigo-600 hover:text-indigo-700 transition-colors cursor-pointer"
-                whileHover={{ x: 4 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <motion.span
-                  animate={{
-                    opacity: [1, 0.8, 1],
-                    scale: [1, 1.02, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  ✨ View Our Ad Gallery
-                </motion.span>
-                <motion.svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  initial={{ x: 0 }}
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </motion.svg>
-              </motion.div>
             </div>
 
             <div className="space-y-3 md:space-y-4">
@@ -119,26 +74,69 @@ export default function Hero() {
                   </span>
                 </span>
               </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4">
               <motion.button
-                onClick={scrollToInfoVideo}
-                className="mt-4 w-fit font-bold text-lg flex items-center gap-2 text-indigo-700 hover:text-indigo-900 transition-colors cursor-pointer animate-pulse"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
+                onClick={() => scrollToElement("ad-generator")}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 sm:py-3 rounded-xl sm:rounded-lg text-lg font-semibold transition-colors flex-1 sm:flex-initial flex items-center justify-center"
+                animate={{
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
-                <span className="text-xl animate-pulse">▶️</span>
-                <span className="animate-pulse">Watch how it works!</span>
+                Create Winning Ad!
               </motion.button>
+              <button
+                onClick={() => scrollToElement("info-video")}
+                className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 px-6 py-4 sm:py-3 rounded-xl sm:rounded-lg text-lg font-semibold border-2 border-gray-200 transition-colors flex-1 sm:flex-initial"
+              >
+                <Play className="w-5 h-5" />
+                Watch Demo
+              </button>
             </div>
           </div>
 
-          {/* Right side - Interactive UI */}
+          {/* Right side - Vertical Media Scroller */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative w-full max-w-xl mx-auto lg:mx-0"
+            className="col-span-12 lg:col-span-6 lg:col-start-7 relative w-[500px] h-[600px] ml-auto"
           >
-            <AdGenerator />
+            <div
+              className={cn(
+                "h-full",
+                isMobile ? "flex flex-col gap-8" : "grid grid-cols-2 gap-8"
+              )}
+            >
+              <div className={cn("h-full", isMobile ? "h-[300px]" : "")}>
+                <MediaScroller
+                  media={HERO_SAMPLES_LEFT}
+                  direction={isMobile ? "left-to-right" : "bottom-to-top"}
+                  speed={1}
+                  gap={16}
+                  syncDirection={true}
+                  className="h-full"
+                />
+              </div>
+              <div className={cn("h-full", isMobile ? "h-[300px]" : "")}>
+                <MediaScroller
+                  media={HERO_SAMPLES_RIGHT}
+                  direction={isMobile ? "right-to-left" : "top-to-bottom"}
+                  speed={1}
+                  gap={16}
+                  syncDirection={true}
+                  isSecondary={true}
+                  className="h-full"
+                />
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>

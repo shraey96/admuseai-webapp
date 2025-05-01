@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -21,3 +21,10 @@ export const downloadImage = async (imageUrl: string, filename?: string) => {
     console.error("Error downloading image:", error);
   }
 };
+
+export function scrollToElement(elementId: string) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+}

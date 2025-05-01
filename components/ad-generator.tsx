@@ -19,6 +19,8 @@ import CopyrightNotice from "./copyright-notice";
 
 import PromptWizard from "./prompt-wizard";
 import ImageUploader from "./image-uploader";
+import { scrollToElement } from "@/lib/utils";
+import { Play } from "lucide-react";
 
 type Stage = "upload" | "generating" | "result";
 
@@ -156,90 +158,101 @@ export default function AdGenerator() {
           }
         }}
       />
-      <AnimatedBorder>
-        <Card className="bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
-          <CardContent className="p-4 sm:p-7">
-            <div className="mb-4 sm:mb-5">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-                Try it out!
-              </h2>
-              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            </div>
-
-            <div className="space-y-4 sm:space-y-6">
-              <ImageUploader images={images} onImagesChange={setImages} />
-
-              <div>
-                <Label className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block">
-                  <span className="flex items-center">
-                    <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
-                      2
-                    </span>
-                    Add Prompt
-                  </span>
-                </Label>
-                <div className="space-y-4">
-                  <div className="relative">
-                    <Textarea
-                      id="prompt"
-                      placeholder="Describe your ad creative: guidelines, setting, lighting, mood, etc. E.g. 'Product shot of serum bottle on marble counter, modern bathroom, soft morning light'"
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      className="min-h-[120px] resize-none"
-                    />
-                    <div className="mt-1.5 flex justify-between items-center">
-                      {/* <CopyrightNotice isTooltip /> */}
-                      <a
-                        href="/prompt-writing-guidelines"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline"
-                        onClick={() => {
-                          trackAnalytics(
-                            ANALYTICS_EVENTS.PROMPT_WRITING_GUIDELINES_CLICKED,
-                            {
-                              source: "ad_generator",
-                            }
-                          );
-                        }}
-                      >
-                        Prompt Writing Guidelines
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-gray-500">Or</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      trackAnalytics(ANALYTICS_EVENTS.PROMPT_WIZARD_OPENED);
-                      setIsWizardOpen(true);
-                    }}
-                    className="w-full flex items-center gap-2 py-6"
-                  >
-                    <span>💡</span>
-                    Help me write a prompt
-                  </Button>
-                </div>
+      <div className="relative">
+        <AnimatedBorder>
+          <Card className="bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
+            <CardContent className="p-4 sm:p-7">
+              <div className="mb-4 sm:mb-5">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+                  Try it out!
+                </h2>
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </div>
 
-              <GenerateButton
-                onClick={handleGenerate}
-                disabled={images.length === 0 || !prompt || isLoading}
-                loading={isLoading}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </AnimatedBorder>
+              <div className="space-y-4 sm:space-y-6">
+                <ImageUploader images={images} onImagesChange={setImages} />
+
+                <div>
+                  <Label className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block">
+                    <span className="flex items-center">
+                      <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
+                        2
+                      </span>
+                      Add Prompt
+                    </span>
+                  </Label>
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <Textarea
+                        id="prompt"
+                        placeholder="Describe your ad creative: guidelines, setting, lighting, mood, etc. E.g. 'Product shot of serum bottle on marble counter, modern bathroom, soft morning light'"
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        className="min-h-[120px] resize-none"
+                      />
+                      <div className="mt-1.5 flex justify-between items-center">
+                        {/* <CopyrightNotice isTooltip /> */}
+                        <a
+                          href="/prompt-writing-guidelines"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline"
+                          onClick={() => {
+                            trackAnalytics(
+                              ANALYTICS_EVENTS.PROMPT_WRITING_GUIDELINES_CLICKED,
+                              {
+                                source: "ad_generator",
+                              }
+                            );
+                          }}
+                        >
+                          Prompt Writing Guidelines
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">Or</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        trackAnalytics(ANALYTICS_EVENTS.PROMPT_WIZARD_OPENED);
+                        setIsWizardOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2 py-6"
+                    >
+                      <span>💡</span>
+                      Help me write a prompt
+                    </Button>
+                  </div>
+                </div>
+
+                <GenerateButton
+                  onClick={handleGenerate}
+                  disabled={images.length === 0 || !prompt || isLoading}
+                  loading={isLoading}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </AnimatedBorder>
+        <div className="absolute bottom-0 right-0 translate-y-[calc(100%+0.75rem)] pr-1">
+          <button
+            onClick={() => scrollToElement("info-video")}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 transition-colors"
+          >
+            <Play className="w-4 h-4" />
+            Watch Demo
+          </button>
+        </div>
+      </div>
 
       {showResultModal && generatedImages && (
         <ResultModal
