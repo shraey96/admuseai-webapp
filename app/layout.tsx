@@ -40,6 +40,15 @@ export const metadata: Metadata = {
     "travel guide creator",
     "restaurant menu maker",
     "magazine cover designer",
+    "product in environment template",
+    "marketing promo template",
+    "product with person template",
+    "styled product template",
+    "service menu template",
+    "magazine cover template",
+    "discount offer template",
+    "testimonial template",
+    "announcement template",
   ],
   authors: [{ name: "AdMuseAI" }],
   creator: "AdMuseAI",
@@ -119,6 +128,14 @@ const jsonLd = {
     itemCondition: "http://schema.org/NewCondition",
     availability: "http://schema.org/InStock",
   },
+  additionalProperty: [
+    {
+      "@type": "PropertyValue",
+      name: "Available Templates",
+      value:
+        "Product in Environment, Marketing Promo, Product with Person, Styled Product, Service Menu, Magazine Cover, Discount Offer, Testimonial, Announcement",
+    },
+  ],
 };
 
 const faqJsonLd = {
@@ -139,6 +156,14 @@ const faqJsonLd = {
       acceptedAnswer: {
         "@type": "Answer",
         text: "AdMuseAI allows you to upload your content, add a descriptive prompt, and receive AI-generated creatives in seconds. No design skills needed.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What templates are available?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "AdMuseAI offers various templates including Product in Environment, Marketing Promo, Product with Person, Styled Product, Service Menu, Magazine Cover, Discount Offer, Testimonial, and Announcement templates. Each template is optimized for specific use cases and marketing needs.",
       },
     },
   ],
