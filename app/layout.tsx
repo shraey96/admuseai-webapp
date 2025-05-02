@@ -15,8 +15,9 @@ const OG_IMAGE_PATH = "/images/og-desktop.png";
 const OG_IMAGE_TWITTER_PATH = OG_IMAGE_PATH;
 
 export const metadata: Metadata = {
-  title: "AdMuseAI - AI-Powered Ad Creative Generator",
-  description: `Generate professional-quality ad creatives with AI. Upload your product and prompt, get stunning visuals in seconds. No design skills needed. Just ${getFormattedPrice()} per creative.`,
+  title:
+    "AdMuseAI - AI-Powered Creative Generator for Ads, Travel Guides, Menus & More",
+  description: `Generate professional-quality ad creatives, travel guides, restaurant menus, magazine covers and more with AI. Upload your content and prompt, get stunning results in seconds. No design skills needed. Just ${getFormattedPrice()} per creative.`,
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -25,6 +26,9 @@ export const metadata: Metadata = {
   keywords: [
     "AI ad generator",
     "ad creative generator",
+    "AI travel guide generator",
+    "AI menu generator",
+    "AI magazine cover generator",
     "AI marketing",
     "automated ad creation",
     "digital advertising",
@@ -33,6 +37,9 @@ export const metadata: Metadata = {
     "marketing creative",
     "product advertising",
     "AI-powered ads",
+    "travel guide creator",
+    "restaurant menu maker",
+    "magazine cover designer",
   ],
   authors: [{ name: "AdMuseAI" }],
   creator: "AdMuseAI",
@@ -46,8 +53,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "AdMuseAI - Generate Professional Ad Creatives Instantly with AI",
-    description: `Transform your product images into stunning ad creatives with AI. Professional results in seconds, no design skills needed. Just ${getFormattedPrice()} per creative.`,
+    title: "AdMuseAI - Generate Professional Creatives Instantly with AI",
+    description: `Transform your content into stunning ad creatives, travel guides, menus, magazine covers and more with AI. Professional results in seconds, no design skills needed. Just ${getFormattedPrice()} per creative.`,
     url: "https://admuseai.com",
     siteName: "AdMuseAI",
     images: [
@@ -55,7 +62,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE_PATH,
         width: 1200,
         height: 630,
-        alt: "AdMuseAI - AI-Powered Ad Creative Generator",
+        alt: "AdMuseAI - AI-Powered Creative Generator",
       },
     ],
   },
@@ -95,9 +102,10 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "http://schema.org",
   "@type": "Product",
-  name: "AdMuseAI Ad Creative",
+  name: "AdMuseAI Creative Generator",
   image: "https://admuseai.com/images/og-desktop.png",
-  description: "AI-powered ad creative generator for product ads.",
+  description:
+    "AI-powered creative generator for ads, travel guides, menus, magazine covers and more.",
   brand: {
     "@type": "Brand",
     name: "AdMuseAI",
@@ -119,10 +127,18 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
+      name: "What can AdMuseAI generate?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "AdMuseAI can generate professional ad creatives, travel guides, restaurant menus, magazine covers and more. Simply upload your content, add a descriptive prompt, and receive AI-generated results in seconds.",
+      },
+    },
+    {
+      "@type": "Question",
       name: "How does AdMuseAI work?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "AdMuseAI allows you to upload a product image, add a descriptive prompt, and receive AI-generated ad creatives in seconds.",
+        text: "AdMuseAI allows you to upload your content, add a descriptive prompt, and receive AI-generated creatives in seconds. No design skills needed.",
       },
     },
   ],

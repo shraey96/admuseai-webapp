@@ -1,6 +1,6 @@
 // Pricing
 export const PRICING = {
-  CREDITS_PRICE: 2.99,
+  CREDITS_PRICE: 1.99,
   CURRENCY: "USD",
   CREDITS_PER_PURCHASE: 1,
 };
