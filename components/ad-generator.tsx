@@ -22,6 +22,8 @@ import ImageUploader from "./image-uploader";
 import { scrollToElement } from "@/lib/utils";
 import { Play } from "lucide-react";
 
+import type { PromptWizardProps } from "./prompt-wizard";
+
 type Stage = "upload" | "generating" | "result";
 
 const IS_FREE = true;
@@ -29,7 +31,12 @@ const IS_FREE = true;
 export default function AdGenerator() {
   const [stage, setStage] = useState<Stage>("upload");
   const [images, setImages] = useState<string[]>([]);
-  const [prompt, setPrompt] = useState("");
+  const [wizardPayload, setWizardPayload] = useState<{
+    prompt: string;
+    size: string;
+    templateName: string;
+    selectedIntent: string | null;
+  } | null>(null);
   const [generatedImages, setGeneratedImages] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,10 +47,10 @@ export default function AdGenerator() {
   const confettiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleGenerate = async () => {
-    if (images.length === 0 || !prompt) return;
+    if (images.length === 0 || !wizardPayload) return;
 
     trackAnalytics(ANALYTICS_EVENTS.GENERATE_AD_CLICKED, {
-      prompt,
+      ...wizardPayload,
     });
 
     const isPaddleReady = typeof window !== "undefined" && window.Paddle;
@@ -81,9 +88,14 @@ export default function AdGenerator() {
       // Call API to generate ad
       const result = await generateAdCreative(
         images,
-        prompt,
+        wizardPayload.prompt,
         transactionId,
-        email
+        email,
+        {
+          size: wizardPayload.size,
+          templateName: wizardPayload.templateName,
+          selectedIntent: wizardPayload.selectedIntent,
+        }
       );
 
       if (result.success && result.imageUrls) {
@@ -125,7 +137,7 @@ export default function AdGenerator() {
 
   const handleGenerateAnother = () => {
     setImages([]);
-    setPrompt("");
+    setWizardPayload(null);
     setGeneratedImages(null);
     setError(null);
     setShowResultModal(false);
@@ -140,8 +152,13 @@ export default function AdGenerator() {
     setShowConfetti(false);
   };
 
-  const handlePromptGenerated = (generatedPrompt: string) => {
-    setPrompt(generatedPrompt);
+  const handlePromptGenerated = (payload: {
+    prompt: string;
+    size: string;
+    templateName: string;
+    selectedIntent: string | null;
+  }) => {
+    setWizardPayload(payload);
   };
 
   if (stage === "generating") {
@@ -186,8 +203,13 @@ export default function AdGenerator() {
                       <Textarea
                         id="prompt"
                         placeholder="Describe your ad creative: guidelines, setting, lighting, mood, etc. E.g. 'Product shot of serum bottle on marble counter, modern bathroom, soft morning light'"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
+                        value={wizardPayload?.prompt || ""}
+                        onChange={(e) => {
+                          setWizardPayload((prev) => ({
+                            ...prev,
+                            prompt: e.target.value,
+                          }));
+                        }}
                         className="min-h-[120px] resize-none"
                       />
                       <div className="mt-1.5 flex justify-between items-center">
@@ -236,7 +258,7 @@ export default function AdGenerator() {
 
                 <GenerateButton
                   onClick={handleGenerate}
-                  disabled={images.length === 0 || !prompt || isLoading}
+                  disabled={images.length === 0 || !wizardPayload || isLoading}
                   loading={isLoading}
                 />
               </div>

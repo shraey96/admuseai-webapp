@@ -26,7 +26,12 @@ export async function generateAdCreative(
   images: string[],
   prompt: string,
   transactionId: string,
-  userEmail: string
+  userEmail: string,
+  options?: {
+    size?: string;
+    templateName?: string;
+    selectedIntent?: string | null;
+  }
 ): Promise<GenerateAdResponse> {
   try {
     const formData = new FormData();
@@ -43,6 +48,11 @@ export async function generateAdCreative(
     formData.append("prompt", prompt);
     formData.append("transactionId", transactionId);
     formData.append("userEmail", userEmail);
+    if (options?.size) formData.append("size", options.size);
+    if (options?.templateName)
+      formData.append("templateName", options.templateName);
+    if (options?.selectedIntent)
+      formData.append("selectedIntent", options.selectedIntent);
 
     const response = await fetch(`${FUNCTIONS_URL}/generate-gpt-images`, {
       method: "POST",

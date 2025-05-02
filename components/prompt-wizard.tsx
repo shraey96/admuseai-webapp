@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Check, Info, Home, Box, Users, Grid } from "lucide-react";
+import { Check, Info, Home, Box, Users, Grid, Megaphone } from "lucide-react";
 import {
   templates,
   getTemplateSteps,
@@ -31,6 +31,9 @@ import {
   appendExtraInstructions,
   appendReferenceIntent,
   getTemplateName,
+  intentMapping,
+  getTemplatesForIntent,
+  TemplateType,
 } from "@/lib/prompt-wizard-config";
 import type { Field } from "@/lib/prompt-wizard-config";
 import {
@@ -40,11 +43,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
-type TemplateType =
-  | "product-in-environment"
-  | "styled-product"
-  | "product-with-person"
-  | "flat-lay";
 
 interface FormValues {
   template: TemplateType;
@@ -79,7 +77,12 @@ interface FormValues {
 interface PromptWizardProps {
   isOpen: boolean;
   onClose: () => void;
-  onPromptGenerated: (prompt: string) => void;
+  onPromptGenerated: (payload: {
+    prompt: string;
+    size: string;
+    templateName: string;
+    selectedIntent: string | null;
+  }) => void;
 }
 
 export default function PromptWizard({
@@ -88,6 +91,7 @@ export default function PromptWizard({
   onPromptGenerated,
 }: PromptWizardProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedIntent, setSelectedIntent] = useState<string | null>(null);
   const [values, setValues] = useState<FormValues>({
     template: "product-in-environment",
     productName: "",
@@ -95,11 +99,42 @@ export default function PromptWizard({
     referenceIntent: "none",
   });
 
+  const initialValues: FormValues = {
+    template: "product-in-environment",
+    productName: "",
+    orientation: "portrait",
+    referenceIntent: "none",
+  };
+
   const steps = getTemplateSteps(values.template);
   const currentStepData = steps.find((step) => step.step === currentStep);
   const isStepValid = currentStepData
     ? validateStepFields(currentStepData, values)
     : false;
+
+  const handleIntentSelect = (intent: string) => {
+    setSelectedIntent(intent);
+    const availableTemplates = getTemplatesForIntent(intent);
+    if (availableTemplates.length === 1) {
+      // Auto-select if only one template
+      setValues({ ...values, template: availableTemplates[0] });
+      setCurrentStep(2); // Move to next step
+    } else {
+      // Show template selection if multiple options
+      setCurrentStep(1.5); // Intermediate step for template selection
+    }
+    trackAnalytics(ANALYTICS_EVENTS.PROMPT_WIZARD_INTENT_CLICKED, {
+      intent,
+    });
+  };
+
+  const handleTemplateSelect = (template: TemplateType) => {
+    setValues({ ...values, template });
+    setCurrentStep(2);
+    trackAnalytics(ANALYTICS_EVENTS.PROMPT_WIZARD_TEMPLATE_CLICKED, {
+      template,
+    });
+  };
 
   const handleNext = () => {
     if (currentStep < steps.length) {
@@ -118,7 +153,22 @@ export default function PromptWizard({
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
+    if (currentStep === 1.5) {
+      setSelectedIntent(null);
+      setCurrentStep(1);
+      setValues(initialValues);
+    } else if (currentStep === 2) {
+      const templatesForIntent = selectedIntent
+        ? getTemplatesForIntent(selectedIntent)
+        : [];
+      if (templatesForIntent.length > 1) {
+        setCurrentStep(1.5);
+      } else {
+        setSelectedIntent(null);
+        setCurrentStep(1);
+        setValues(initialValues);
+      }
+    } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -130,7 +180,14 @@ export default function PromptWizard({
       prompt,
       values.extraInstructions
     );
-    onPromptGenerated(finalPrompt);
+    const size = values.orientation === "portrait" ? "1024x1536" : "1536x1024";
+    const templateName = getTemplateName(values.template);
+    onPromptGenerated({
+      prompt: finalPrompt,
+      size,
+      templateName,
+      selectedIntent,
+    });
     onClose();
   };
 
@@ -209,31 +266,144 @@ export default function PromptWizard({
   const renderFields = (fields: Field[]) => {
     return (
       <div className="space-y-6">
-        {fields.map((field) => (
-          <div key={field.name}>
-            <div className="flex items-center gap-2">
-              <Label>{field.label}</Label>
-              {field.tooltip && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="h-4 w-4 text-gray-400" />
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-black text-white">
-                      <p className="max-w-[200px] text-sm">{field.tooltip}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              {field.optional && (
-                <span className="text-sm text-gray-500">(Optional)</span>
-              )}
+        {fields
+          .filter((field) => !field.showIf || field.showIf(values))
+          .map((field) => (
+            <div key={field.name}>
+              <div className="flex items-center gap-2">
+                <Label>{field.label}</Label>
+                {field.tooltip && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-4 w-4 text-gray-400" />
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-black text-white">
+                        <p className="max-w-[200px] text-sm">{field.tooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                {field.optional && (
+                  <span className="text-sm text-gray-500">(Optional)</span>
+                )}
+              </div>
+              {renderField(field)}
             </div>
-            {renderField(field)}
-          </div>
-        ))}
+          ))}
       </div>
     );
+  };
+
+  const renderStep = () => {
+    if (currentStep === 1) {
+      return (
+        <div className="space-y-6">
+          <h3 className="text-lg font-medium text-gray-900">
+            What would you like to create?
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            {Object.entries(intentMapping).map(([intent, config]) => (
+              <TooltipProvider key={intent}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => handleIntentSelect(intent)}
+                      className={`
+                        w-full p-4 rounded-lg border-2 transition-all duration-200
+                        ${
+                          selectedIntent === intent
+                            ? "border-indigo-600 bg-indigo-50"
+                            : "border-gray-200 hover:border-indigo-200"
+                        }
+                      `}
+                    >
+                      <div className="text-left">
+                        <div className="flex items-center gap-2">
+                          {getTemplateIcon(config.icon as any)}
+                          <div className="font-medium">{intent}</div>
+                        </div>
+                        <div className="text-sm text-gray-500 mt-2">
+                          {config.description}
+                        </div>
+                      </div>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="center"
+                    sideOffset={5}
+                    className="bg-black text-white w-[250px] p-3"
+                  >
+                    <p className="text-sm leading-relaxed">
+                      {config.useCases.join(", ")}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (currentStep === 1.5) {
+      const availableTemplates = selectedIntent
+        ? getTemplatesForIntent(selectedIntent)
+        : [];
+      return (
+        <div className="space-y-6">
+          <h3 className="text-lg font-medium text-gray-900">
+            Choose a template style
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            {availableTemplates.map((templateType) => (
+              <TooltipProvider key={templateType}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => handleTemplateSelect(templateType)}
+                      className={`
+                        w-full p-4 rounded-lg border-2 transition-all duration-200
+                        ${
+                          values.template === templateType
+                            ? "border-indigo-600 bg-indigo-50"
+                            : "border-gray-200 hover:border-indigo-200"
+                        }
+                      `}
+                    >
+                      <div className="text-left">
+                        <div className="flex items-center gap-2">
+                          {getTemplateIcon(templateType)}
+                          <div className="font-medium">
+                            {getTemplateName(templateType)}
+                          </div>
+                        </div>
+                        <div className="text-sm text-gray-500 mt-2">
+                          {templateDescriptions[templateType].short}
+                        </div>
+                      </div>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="center"
+                    sideOffset={5}
+                    className="bg-black text-white w-[250px] p-3"
+                  >
+                    <p className="text-sm leading-relaxed">
+                      {templateDescriptions[templateType].detailed}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return currentStepData && renderFields(currentStepData.fields);
   };
 
   return (
@@ -241,7 +411,7 @@ export default function PromptWizard({
       <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-hidden p-4 sm:p-6">
         <DialogHeader className="pb-2 sm:pb-4 flex-shrink-0">
           <DialogTitle className="text-xl sm:text-2xl font-semibold">
-            Prompt Wizard
+            Ads Wizard
           </DialogTitle>
         </DialogHeader>
 
@@ -310,101 +480,7 @@ export default function PromptWizard({
 
         {/* Content Area with Scroll */}
         <div className="flex-1 overflow-y-auto min-h-0">
-          <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
-            {currentStepData && (
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {currentStepData.title}
-                </h3>
-                {currentStepData.description && (
-                  <p className="text-sm text-gray-500">
-                    {currentStepData.description}
-                  </p>
-                )}
-                {currentStep === 1 ? (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      {(Object.keys(templates) as TemplateType[]).map(
-                        (templateType) => (
-                          <TooltipProvider key={templateType}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <button
-                                  onClick={() => {
-                                    setValues({
-                                      ...values,
-                                      template: templateType,
-                                    });
-                                    trackAnalytics(
-                                      ANALYTICS_EVENTS.PROMPT_WIZARD_TEMPLATE_CLICKED,
-                                      {
-                                        template: templateType,
-                                      }
-                                    );
-                                  }}
-                                  className={`
-                                  w-full p-4 rounded-lg border-2 transition-all duration-200
-                                  ${
-                                    values.template === templateType
-                                      ? "border-indigo-600 bg-indigo-50"
-                                      : "border-gray-200 hover:border-indigo-200"
-                                  }
-                                `}
-                                >
-                                  <div className="text-left">
-                                    <div className="flex items-center gap-2">
-                                      {getTemplateIcon(templateType)}
-                                      <div className="font-medium">
-                                        {getTemplateName(templateType)}
-                                      </div>
-                                    </div>
-                                    <div className="text-sm text-gray-500 mt-2">
-                                      {templateDescriptions[templateType].short}
-                                    </div>
-                                  </div>
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent
-                                side="top"
-                                align="center"
-                                sideOffset={5}
-                                className="bg-black text-white w-[250px] p-3"
-                              >
-                                <p className="text-sm leading-relaxed">
-                                  {templateDescriptions[templateType].detailed}
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )
-                      )}
-                    </div>
-                    <div className="mt-4 text-center">
-                      <Link
-                        href="/prompt-writing-guidelines"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-2 flex-start"
-                        onClick={() => {
-                          trackAnalytics(
-                            ANALYTICS_EVENTS.PROMPT_WRITING_GUIDELINES_CLICKED,
-                            {
-                              source: "prompt_wizard",
-                            }
-                          );
-                        }}
-                      >
-                        <Info className="h-4 w-4" />
-                        <span>Learn more about our templates</span>
-                      </Link>
-                    </div>
-                  </>
-                ) : (
-                  renderFields(currentStepData.fields)
-                )}
-              </div>
-            )}
-          </div>
+          <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">{renderStep()}</div>
         </div>
 
         {/* Navigation - Fixed at Bottom */}
@@ -440,6 +516,8 @@ function getTemplateIcon(templateType: TemplateType) {
       return <Users className="w-6 h-6 mb-2 text-indigo-600" />;
     case "flat-lay":
       return <Grid className="w-6 h-6 mb-2 text-indigo-600" />;
+    case "marketing-promo":
+      return <Megaphone className="w-6 h-6 mb-2 text-indigo-600" />;
     default:
       return null;
   }

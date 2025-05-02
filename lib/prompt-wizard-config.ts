@@ -18,6 +18,7 @@ interface BaseField {
   type: FieldType;
   optional?: boolean;
   tooltip?: string;
+  showIf?: (values: Record<string, any>) => boolean;
 }
 
 interface TextField extends BaseField {
@@ -66,6 +67,13 @@ interface TemplateConfig {
   steps: Step[];
   generatePrompt: (values: Record<string, any>) => string;
 }
+
+export type TemplateType =
+  | "product-in-environment"
+  | "styled-product"
+  | "product-with-person"
+  | "flat-lay"
+  | "marketing-promo";
 
 // Template descriptions
 export const templateDescriptions: Record<
@@ -133,6 +141,18 @@ export const templateDescriptions: Record<
       "Specific artistic or creative directions",
       "Custom brand-specific visual requirements",
       "Experimental or innovative marketing concepts",
+    ],
+  },
+  "marketing-promo": {
+    short: "Create engaging marketing materials with testimonials and quotes.",
+    detailed:
+      "Perfect for creating social proof, promotional materials, and marketing content that combines text and visuals. Ideal for testimonials, quote cards, and promotional overlays.",
+    useCases: [
+      "Customer testimonials",
+      "Quote cards for social media",
+      "Promotional banners",
+      "Marketing overlays",
+      "Social proof content",
     ],
   },
 };
@@ -206,9 +226,10 @@ export const finalFields: Field[] = [
     name: "extraInstructions",
     type: "textarea",
     optional: true,
-    placeholder: "Add any additional instructions or requirements",
+    placeholder:
+      "For more control, add any specific requests or creative direction here (e.g., 'use a blue background', 'add a gold border', 'make the lighting dramatic').",
     tooltip:
-      "Add any specific details not covered in previous steps. Examples: specific camera angles, additional props, color adjustments, or any other creative direction you'd like to include in the image generation.",
+      "For more control, add any specific requests, creative direction, or details not covered above. Examples: camera angles, props, color adjustments, mood, or anything else you'd like to specify.",
     rows: 4,
   },
 ];
@@ -340,9 +361,9 @@ The environment should feel ${values.moodStyle}, featuring:
 ${values.decor1 ? `– ${values.decor1}\n` : ""}${
         values.colorTexture ? `– ${values.colorTexture}` : ""
       }
-The product should be the hero of the image. Format: ${
-        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
-      }.`;
+The product should be the hero of the image. Format: ${getImageSizeFromOrientation(
+        values.orientation
+      )}.`;
     },
   },
   "styled-product": {
@@ -415,9 +436,9 @@ The product should be the hero of the image. Format: ${
       }, described as ${
         values.productDescription
       }, that reflects the following visual aesthetic: ${values.shootingStyle}.
-Maintain the product's proportions, label placement, and design. Do not alter the label or shape. Format: ${
-        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
-      }.`;
+Maintain the product's proportions, label placement, and design. Do not alter the label or shape. Format: ${getImageSizeFromOrientation(
+        values.orientation
+      )}.`;
     },
   },
   "product-with-person": {
@@ -450,6 +471,31 @@ Maintain the product's proportions, label placement, and design. Do not alter th
                 label: "Young Caucasian Woman",
                 value: "young Caucasian woman",
               },
+              { label: "Young Black Man", value: "young Black man" },
+              {
+                label: "Middle-Aged Caucasian Woman",
+                value: "middle-aged Caucasian woman",
+              },
+              { label: "Elderly Asian Woman", value: "elderly Asian woman" },
+              { label: "Latina Woman", value: "latina woman" },
+              { label: "Latino Man", value: "latino man" },
+              { label: "South Asian Woman", value: "south asian woman" },
+              { label: "South Asian Man", value: "south asian man" },
+              { label: "Middle Eastern Woman", value: "middle eastern woman" },
+              { label: "Middle Eastern Man", value: "middle eastern man" },
+              {
+                label: "Young Person (Ambiguous Gender)",
+                value: "young person",
+              },
+              {
+                label: "Older Person (Ambiguous Gender)",
+                value: "older person",
+              },
+              {
+                label: "Person with Curly Hair",
+                value: "person with curly hair",
+              },
+              { label: "Person with Beard", value: "person with beard" },
             ],
             placeholder: "Select or type a person description",
             tooltip:
@@ -556,9 +602,9 @@ ${
     ? `Include background elements: ${values.backgroundElements}. `
     : ""
 }
-Keep proportions and label accuracy true to the original. Format: ${
-        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
-      }.`;
+Keep proportions and label accuracy true to the original. Format: ${getImageSizeFromOrientation(
+        values.orientation
+      )}.`;
     },
   },
   "flat-lay": {
@@ -659,9 +705,9 @@ Keep proportions and label accuracy true to the original. Format: ${
       },
     ],
     generatePrompt: (values) => {
-      return `Create a ${
-        values.orientation === "portrait" ? "1024x1536" : "1536x1024"
-      } static ad image for ${
+      return `Create a ${getImageSizeFromOrientation(
+        values.orientation
+      )} static ad image for ${
         values.productName
       } featuring a flat-lay arrangement of a curated ${
         values.productType
@@ -678,7 +724,205 @@ Lighting: ${
       }. All items should be balanced and intentional, maintaining a clean top-down view. No extra props or text.`;
     },
   },
+  "marketing-promo": {
+    steps: [
+      {
+        step: 3,
+        title: "Content Details",
+        description: "Configure your marketing content",
+        fields: [
+          {
+            label: "Content Type",
+            name: "contentType",
+            type: "dropdown",
+            options: [
+              {
+                label: "Magazine / Guide Cover",
+                value: "magazine",
+              },
+              { label: "Discount / Offer", value: "discount" },
+              { label: "Testimonial / Quote", value: "testimonial" },
+              { label: "New Launch / Announcement", value: "announcement" },
+              { label: "Menu / Service Card", value: "menu" },
+            ],
+            tooltip: "Select the type of marketing content you want to create",
+          },
+          {
+            label: "Magazine Title",
+            name: "magazineTitle",
+            type: "text",
+            placeholder: "e.g., Urban Pulse",
+            tooltip: "The name of your magazine or editorial creative",
+            optional: true,
+            showIf: (values) => values.contentType === "magazine",
+          },
+          {
+            label: "Headline Articles",
+            name: "magazineHeadlines",
+            type: "textarea",
+            placeholder: "Enter 2–4 article headlines, each on a new line",
+            tooltip:
+              "These will appear as featured headlines on the magazine cover",
+            rows: 4,
+            optional: true,
+            showIf: (values) => values.contentType === "magazine",
+          },
+          {
+            label: "Text Content",
+            name: "textContent",
+            type: "textarea",
+            placeholder: "Enter your testimonial, quote, or promotional text",
+            tooltip: "The main text content for your marketing material",
+            showIf: (values) => values.contentType !== "magazine",
+          },
+          {
+            label: "Visual Style",
+            name: "visualStyle",
+            type: "creatable-select",
+            options: [
+              { label: "Minimalist", value: "minimalist" },
+              { label: "Bold & Modern", value: "bold-modern" },
+              { label: "Elegant", value: "elegant" },
+              { label: "Playful", value: "playful" },
+              { label: "Professional", value: "professional" },
+            ],
+            placeholder: "Select or type a visual style",
+            tooltip: "The overall visual style of your marketing material",
+          },
+          {
+            label: "Background Type",
+            name: "backgroundType",
+            type: "creatable-select",
+            options: [
+              { label: "Gradient", value: "gradient" },
+              { label: "Pattern", value: "pattern" },
+              { label: "Solid Color", value: "solid" },
+              { label: "Product Image", value: "product" },
+              { label: "Lifestyle Scene", value: "lifestyle" },
+            ],
+            placeholder: "Select or type a background type",
+            tooltip: "The type of background for your marketing material",
+          },
+          {
+            label: "Color Scheme",
+            name: "colorScheme",
+            type: "creatable-select",
+            options: [
+              { label: "Brand Colors", value: "brand" },
+              { label: "Warm Tones", value: "warm" },
+              { label: "Cool Tones", value: "cool" },
+              { label: "Neutral", value: "neutral" },
+              { label: "High Contrast", value: "contrast" },
+            ],
+            placeholder: "Select or type a color scheme",
+            tooltip: "The color scheme for your marketing material",
+          },
+        ],
+      },
+    ],
+    generatePrompt: (values) => {
+      const isMagazine = values.contentType === "magazine";
+      const orientationLabel = getImageSizeFromOrientation(values.orientation);
+      if (isMagazine) {
+        return `Create a professional and visually engaging magazine cover for a magazine called "${values.magazineTitle}". \n\nInclude these featured article headlines clearly:\n${values.magazineHeadlines}
+\nUse ${values.visualStyle} visual style with a ${values.backgroundType} background and a ${values.colorScheme} color palette. The design should use contemporary typography and feature a visually compelling composition that aligns with the magazine's theme and style.\n\nFormat: ${orientationLabel}.`;
+      }
+      // fallback to regular marketing-promo flow
+      const getContentTypeDescription = (type: string) => {
+        switch (type) {
+          case "discount":
+            return "promotional offer or discount";
+          case "magazine":
+            return "magazine or guide-style cover";
+          case "testimonial":
+            return "customer testimonial or quote";
+          case "announcement":
+            return "new product launch or announcement";
+          case "menu":
+            return "menu or service listing";
+          default:
+            return type;
+        }
+      };
+      return `Create a visually striking static ad image for ${
+        values.productName
+      } designed to highlight a ${getContentTypeDescription(
+        values.contentType
+      )}.\n\nThe creative should feature the following main text content: "${
+        values.textContent
+      }". The overall visual style should feel ${values.visualStyle}, with a ${
+        values.backgroundType
+      } background and a ${
+        values.colorScheme
+      } color palette that complements the message and branding.\n\nEnsure clean, legible typography that aligns with the selected style. The image should be balanced and aesthetically cohesive.\n\nFormat: ${orientationLabel}.`;
+    },
+  },
 };
+
+// Intent to template mapping
+export const intentMapping: Record<
+  string,
+  {
+    templates: TemplateType[];
+    description: string;
+    icon: string;
+    useCases: string[];
+  }
+> = {
+  "Clean Product Shot": {
+    templates: ["styled-product", "flat-lay"],
+    description: "Professional product photography for catalog and hero images",
+    icon: "Box",
+    useCases: ["Product hero images", "Catalog shots", "Product detail pages"],
+  },
+  "Lifestyle Scene": {
+    templates: ["product-in-environment"],
+    description: "Show your product in real-world settings",
+    icon: "Home",
+    useCases: [
+      "Social media content",
+      "Website lifestyle shots",
+      "Marketing materials",
+    ],
+  },
+  "With a Person": {
+    templates: ["product-with-person"],
+    description: "Show real people using your product",
+    icon: "Users",
+    useCases: ["Social proof", "Usage demonstrations", "Lifestyle marketing"],
+  },
+  "Bundle / Gift Box": {
+    templates: ["flat-lay"],
+    description: "Showcase product collections and gift sets",
+    icon: "Gift",
+    useCases: ["Gift sets", "Product bundles", "Collection displays"],
+  },
+  "Marketing / Promo": {
+    templates: ["marketing-promo"],
+    description: "Create promotional and marketing materials",
+    icon: "Megaphone",
+    useCases: [
+      "Social media ads",
+      "Promotional materials",
+      "Marketing campaigns",
+    ],
+  },
+};
+
+// Helper function to get templates for an intent
+export function getTemplatesForIntent(intent: string): TemplateType[] {
+  return intentMapping[intent]?.templates || [];
+}
+
+// Helper function to get intent for a template
+export function getIntentForTemplate(template: TemplateType): string | null {
+  for (const [intent, config] of Object.entries(intentMapping)) {
+    if (config.templates.includes(template)) {
+      return intent;
+    }
+  }
+  return null;
+}
 
 // Final fields to be added to the last step of each template
 
@@ -718,16 +962,17 @@ export function validateStepFields(
   step: Step,
   values: Record<string, any>
 ): boolean {
-  return step.fields.every((field) => {
-    // Skip validation for optional fields
-    if (field.optional) {
-      return true;
-    }
-
-    const value = values[field.name];
-    // Check if the value exists and is not empty
-    return value !== undefined && value !== null && value !== "";
-  });
+  return step.fields
+    .filter((field) => !field.showIf || field.showIf(values))
+    .every((field) => {
+      // Skip validation for optional fields
+      if (field.optional) {
+        return true;
+      }
+      const value = values[field.name];
+      // Check if the value exists and is not empty
+      return value !== undefined && value !== null && value !== "";
+    });
 }
 
 // Helper function to append extra instructions to prompt
@@ -770,3 +1015,10 @@ export type {
   Step,
   TemplateConfig,
 };
+
+// Utility function to get image size from orientation
+export function getImageSizeFromOrientation(
+  orientation: "portrait" | "landscape"
+) {
+  return orientation === "portrait" ? "1024x1536" : "1536x1024";
+}
