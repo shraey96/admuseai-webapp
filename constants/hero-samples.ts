@@ -87,8 +87,8 @@ export const PRIORITY_SAMPLES = [
   "sorbet_ad",
   "s16",
   "s17",
-  "chocolate_shake_ad",
   "s18",
+  "chocolate_shake_ad",
 ];
 /**
  * Splits and organizes hero samples into left and right arrays with priority items at the top.
