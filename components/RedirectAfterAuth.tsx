@@ -19,8 +19,8 @@ export default function RedirectAfterAuth() {
           // Exchange code for session
           await supabase.auth.exchangeCodeForSession(code);
 
-          // Get redirectTo from URL or default to /app
-          const redirectTo = searchParams.get("redirectTo") || "/app";
+          // Get redirectTo from URL or default to /dashboard
+          const redirectTo = searchParams.get("redirectTo") || "/dashboard";
           router.push(redirectTo);
         } catch (error) {
           console.error("Error exchanging code for session:", error);

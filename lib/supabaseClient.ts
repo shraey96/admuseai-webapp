@@ -64,6 +64,7 @@ export type Tables = {
 
   // Ads table
   ads: {
+    name: string;
     id: string;
     brand_id: string | null; // Optional brand association
     user_id: string;

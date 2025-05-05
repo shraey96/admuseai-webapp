@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useCredits } from "@/context/CreditContext";
 import { supabase } from "@/lib/supabaseClient";
 import type { Tables } from "@/lib/supabaseClient";
+import { createAdWithImages } from "@/lib/api";
+import { AdFormPayload } from "@/components/ads/AdForm";
 
-type Ad = Tables["ads"];
+type Ad = Tables["generated_ads"];
 type AdInput = Omit<
   Ad,
   "id" | "user_id" | "status" | "created_at" | "updated_at" | "completed_at"
@@ -14,18 +15,20 @@ type AdInput = Omit<
 
 export function useAds() {
   const { user } = useAuth();
-  const { recordCreditTransaction } = useCredits();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const getAds = async (brandId?: string): Promise<Ad[]> => {
-    if (!user) return [];
+  const getAds = async (
+    brandId?: string
+  ): Promise<{ data: Ad[]; error: string | null }> => {
+    if (!user) return { data: [], error: "Not authenticated" };
 
     setIsLoading(true);
-    setError(null);
 
     try {
-      let query = supabase.from("ads").select("*").eq("user_id", user.id);
+      let query = supabase
+        .from("generated_ads")
+        .select("*")
+        .eq("user_id", user.id);
 
       if (brandId) {
         query = query.eq("brand_id", brandId);
@@ -36,93 +39,67 @@ export function useAds() {
       });
 
       if (error) {
-        setError(error.message);
-        return [];
+        return { data: [], error: error.message };
       }
 
-      return data as Ad[];
+      return { data: data as Ad[], error: null };
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to fetch ads";
-      setError(message);
-      return [];
+      return { data: [], error: message };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getAd = async (adId: string): Promise<Ad | null> => {
-    if (!user) return null;
+  const getAd = async (
+    adId: string
+  ): Promise<{ data: Ad | null; error: string | null }> => {
+    if (!user) return { data: null, error: "Not authenticated" };
 
     setIsLoading(true);
-    setError(null);
 
     try {
       const { data, error } = await supabase
-        .from("ads")
+        .from("generated_ads")
         .select("*")
         .eq("id", adId)
-        .eq("user_id", user.id)
+
         .single();
 
       if (error) {
-        setError(error.message);
-        return null;
+        return { data: null, error: error.message };
       }
 
-      return data as Ad;
+      return { data: data as Ad, error: null };
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to fetch ad";
-      setError(message);
-      return null;
+      return { data: null, error: message };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const createAd = async (adData: AdInput): Promise<Ad | null> => {
-    if (!user) return null;
+  const createAd = async (
+    adData: AdFormPayload
+  ): Promise<{ data: Ad | null; error: string | null }> => {
+    if (!user) return { data: null, error: "Not authenticated" };
 
     setIsLoading(true);
-    setError(null);
-
+    console.log(adData);
     try {
-      const now = new Date().toISOString();
+      // Use createAdWithImages from lib/api with the correct payload format
+      const result = await createAdWithImages(adData);
 
-      // Create the ad record
-      const { data, error } = await supabase
-        .from("ads")
-        .insert({
-          ...adData,
-          user_id: user.id,
-          status: "pending",
-          created_at: now,
-          updated_at: now,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        setError(error.message);
-        return null;
+      if (!result.success) {
+        return { data: null, error: result.error || "Failed to create ad" };
       }
 
-      const newAd = data as Ad;
-
-      // Record the credit transaction
-      await recordCreditTransaction(
-        -newAd.credits_used,
-        "generate_ad",
-        newAd.id,
-        { prompt: newAd.prompt, brand_id: newAd.brand_id }
-      );
-
-      return newAd;
+      return { data: result.ad as Ad, error: null };
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to create ad";
-      setError(message);
-      return null;
+      return { data: null, error: message };
     } finally {
       setIsLoading(false);
     }
@@ -132,11 +109,10 @@ export function useAds() {
     adId: string,
     status: "completed" | "failed",
     data?: { result_urls?: string[]; error_message?: string }
-  ): Promise<Ad | null> => {
-    if (!user) return null;
+  ): Promise<{ data: Ad | null; error: string | null }> => {
+    if (!user) return { data: null, error: "Not authenticated" };
 
     setIsLoading(true);
-    setError(null);
 
     try {
       const now = new Date().toISOString();
@@ -157,53 +133,89 @@ export function useAds() {
       }
 
       const { data: updatedAd, error } = await supabase
-        .from("ads")
+        .from("generated_ads")
         .update(updateData)
         .eq("id", adId)
-        .eq("user_id", user.id)
+
         .select()
         .single();
 
       if (error) {
-        setError(error.message);
-        return null;
+        return { data: null, error: error.message };
       }
 
-      return updatedAd as Ad;
+      return { data: updatedAd as Ad, error: null };
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to update ad status";
-      setError(message);
-      return null;
+      return { data: null, error: message };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const deleteAd = async (adId: string): Promise<boolean> => {
-    if (!user) return false;
+  const deleteAd = async (
+    adId: string
+  ): Promise<{ success: boolean; error: string | null }> => {
+    if (!user) return { success: false, error: "Not authenticated" };
 
     setIsLoading(true);
-    setError(null);
 
     try {
-      const { error } = await supabase
-        .from("ads")
-        .delete()
-        .eq("id", adId)
-        .eq("user_id", user.id);
+      const { error } = await supabase.functions.invoke("delete-ad", {
+        method: "DELETE",
+        body: { adId },
+      });
 
       if (error) {
-        setError(error.message);
-        return false;
+        return { success: false, error: error.message };
       }
 
-      return true;
+      return { success: true, error: null };
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to delete ad";
-      setError(message);
-      return false;
+      return { success: false, error: message };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateAd = async (
+    adId: string,
+    adData: Partial<AdInput>
+  ): Promise<{ success: boolean; error: string | null; data: Ad | null }> => {
+    if (!user)
+      return { success: false, error: "Not authenticated", data: null };
+
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase
+        .from("generated_ads")
+        .update({
+          prompt: adData.prompt,
+          brand_id: adData.brand_id || null,
+          visual_style: adData.visual_style || null,
+          ad_type: adData.ad_type || "image",
+          dimensions: adData.dimensions || null,
+          updated_at: new Date().toISOString(),
+          name: adData.name,
+          // Do not update status, result_urls, original_image_urls, credits_used or completed_at
+        })
+        .eq("id", adId)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message, data: null };
+      }
+
+      return { success: true, error: null, data: data as Ad };
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to update ad";
+      return { success: false, error: message, data: null };
     } finally {
       setIsLoading(false);
     }
@@ -213,9 +225,9 @@ export function useAds() {
     getAds,
     getAd,
     createAd,
+    updateAd,
     updateAdStatus,
     deleteAd,
     isLoading,
-    error,
   };
 }

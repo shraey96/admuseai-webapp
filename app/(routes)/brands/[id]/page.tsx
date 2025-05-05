@@ -46,7 +46,7 @@ export default function BrandEditPage() {
         const created = await createBrand(values);
         if (created) {
           toast({ title: "Brand created" });
-          router.push("/app/brands");
+          router.push("/brands");
         } else {
           setError("Failed to create brand");
         }
@@ -54,7 +54,7 @@ export default function BrandEditPage() {
         const updated = await updateBrand(brand.id, values);
         if (updated) {
           toast({ title: "Brand updated" });
-          router.push("/app/brands");
+          router.push("/brands");
         } else {
           setError("Failed to update brand");
         }
@@ -71,7 +71,7 @@ export default function BrandEditPage() {
     const success = await deleteBrand(brand.id);
     if (success) {
       toast({ title: "Brand deleted" });
-      router.push("/app/brands");
+      router.push("/brands");
     } else {
       toast({ title: "Failed to delete brand", variant: "destructive" });
     }

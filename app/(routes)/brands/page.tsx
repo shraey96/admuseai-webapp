@@ -44,7 +44,7 @@ export default function BrandsPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Brands</h1>
         <Button asChild>
-          <Link href="/app/brands/new">Create Brand</Link>
+          <Link href="/brands/new">Create Brand</Link>
         </Button>
       </div>
       <BrandTable

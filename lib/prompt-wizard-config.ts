@@ -73,7 +73,8 @@ export type TemplateType =
   | "styled-product"
   | "product-with-person"
   | "flat-lay"
-  | "marketing-promo";
+  | "marketing-promo"
+  | "custom-prompt";
 
 // Template descriptions
 export const templateDescriptions: Record<
@@ -857,6 +858,28 @@ Lighting: ${
       } color palette that complements the message and branding.\n\nEnsure clean, legible typography that aligns with the selected style. The image should be balanced and aesthetically cohesive.\n\nFormat: ${orientationLabel}.`;
     },
   },
+  "custom-prompt": {
+    steps: [
+      {
+        step: 2,
+        title: "Custom Prompt",
+        description: "Write your own detailed prompt for the image generation.",
+        fields: [
+          {
+            label: "Prompt",
+            name: "customPrompt",
+            type: "textarea",
+            placeholder:
+              "Describe exactly what you want to generate. Include style, mood, scene, and any details. For example: 'A photorealistic image of a modern kitchen with natural sunlight, marble countertops, and a vase of fresh tulips.'",
+            rows: 8,
+            tooltip:
+              "Write your own prompt for the AI. The more detail you provide, the better the result.",
+          },
+        ],
+      },
+    ],
+    generatePrompt: (values) => values.customPrompt || "",
+  },
 };
 
 // Intent to template mapping
@@ -907,6 +930,17 @@ export const intentMapping: Record<
       "Marketing campaigns",
     ],
   },
+  "Custom Prompt": {
+    templates: ["custom-prompt"],
+    description: "Write your own detailed prompt for full creative control",
+    icon: "Edit",
+    useCases: [
+      "Completely custom scenes",
+      "Advanced users",
+      "Unique or experimental requests",
+      "Brand-specific creative directions",
+    ],
+  },
 };
 
 // Helper function to get templates for an intent
@@ -931,6 +965,13 @@ export function getTemplateSteps(templateType: string): Step[] {
   const templateConfig = templates[templateType];
   if (!templateConfig) {
     throw new Error(`Template type "${templateType}" not found`);
+  }
+
+  // Special case: custom-prompt should not include globalSteps or finalFields
+  if (templateType === "custom-prompt") {
+    return [templateSelectionStep, ...templateConfig.steps].sort(
+      (a, b) => a.step - b.step
+    );
   }
 
   // Create deep copies of steps to avoid modifying originals

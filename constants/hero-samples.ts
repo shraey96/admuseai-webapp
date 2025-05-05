@@ -90,6 +90,7 @@ export const PRIORITY_SAMPLES = [
   "s18",
   "chocolate_shake_ad",
 ];
+
 /**
  * Splits and organizes hero samples into left and right arrays with priority items at the top.
  * Priority items (up to 4) will appear at the beginning of the combined array, followed by
@@ -169,3 +170,65 @@ export function getHeroSamplesSplit(
 }
 
 export const { HERO_SAMPLES_LEFT, HERO_SAMPLES_RIGHT } = getHeroSamplesSplit();
+
+/**
+ * Returns an array of N arrays, each containing a chunk of the shuffled/prioritized samples.
+ * @param {number} numRows - Number of rows (arrays) to split into
+ * @param {Sample[]} [samples=HERO_SAMPLES] - Array of samples to process
+ * @param {string[]} [priorityItems=PRIORITY_SAMPLES] - Array of strings to match against sample.src
+ * @returns {Sample[][]} Array of N arrays of samples
+ */
+export function getHeroSamplesGrid(
+  numRows: number,
+  samples: Sample[] = HERO_SAMPLES,
+  priorityItems: string[] = PRIORITY_SAMPLES
+): Sample[][] {
+  if (numRows < 1) return [];
+
+  // Prioritize and shuffle as before
+  const prioritySamples = samples.filter((sample) =>
+    priorityItems.some((item) => sample.src.includes(item))
+  );
+  const nonPrioritySamples = samples.filter(
+    (sample) => !priorityItems.some((item) => sample.src.includes(item))
+  );
+  const shuffledPriority = [...prioritySamples].sort(() => Math.random() - 0.5);
+  const shuffledNonPriority = [...nonPrioritySamples].sort(
+    () => Math.random() - 0.5
+  );
+
+  // Calculate how many samples we need
+  const minPerRow = Math.ceil(samples.length / numRows);
+  const totalNeeded = minPerRow * numRows;
+  const priorityCount = Math.min(shuffledPriority.length, numRows * 2); // up to 2 per row
+
+  // If we need more samples, repeat the non-priority array
+  const repeated: Sample[] = [];
+  while (repeated.length < totalNeeded - priorityCount) {
+    repeated.push(...shuffledNonPriority);
+  }
+
+  // Take exactly what we need and shuffle again (except priority items)
+  const finalSamples = [
+    ...shuffledPriority.slice(0, priorityCount),
+    ...repeated.slice(0, totalNeeded - priorityCount),
+  ]
+    .sort((a, b) => {
+      const aIsPriority = priorityItems.some((item) => a.src.includes(item));
+      const bIsPriority = priorityItems.some((item) => b.src.includes(item));
+      if (aIsPriority && !bIsPriority) return -1;
+      if (!aIsPriority && bIsPriority) return 1;
+      return Math.random() - 0.5;
+    })
+    .map((image) => ({
+      ...image,
+      type: image.type || "image",
+    }));
+
+  // Split into N arrays
+  const result: Sample[][] = Array.from({ length: numRows }, () => []);
+  for (let i = 0; i < finalSamples.length; i++) {
+    result[i % numRows].push(finalSamples[i]);
+  }
+  return result;
+}

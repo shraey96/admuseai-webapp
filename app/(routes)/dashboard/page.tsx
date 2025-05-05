@@ -89,11 +89,13 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold font-sans tracking-tight">
+          Dashboard
+        </h1>
 
         <div className="flex gap-2">
           <Button asChild>
-            <Link href="/app/ads/new">
+            <Link href="/ads/new">
               <ImagePlus className="h-4 w-4 mr-2" />
               Create Ad
             </Link>
@@ -101,47 +103,46 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Ads
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <ImagePlus className="h-4 w-4 text-blue-500" /> Total Ads
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold font-sans">
               {isLoading ? "..." : stats.totalAds}
             </div>
           </CardContent>
         </Card>
-
-        <Card>
+        <Card className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Brands
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <TagIcon className="h-4 w-4 text-purple-500" /> Total Brands
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold font-sans">
               {isLoading ? "..." : stats.totalBrands}
             </div>
           </CardContent>
         </Card>
-
-        <Card>
+        <Card className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Available Credits
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-green-500" /> Available
+              Credits
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{credits}</div>
+            <div className="text-2xl font-bold font-sans">{credits}</div>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="col-span-1">
+        <Card className="col-span-1 shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
             <CardDescription>Your most recent ads</CardDescription>
@@ -156,7 +157,7 @@ export default function DashboardPage() {
                 <History className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
                 <p className="mt-2 text-muted-foreground">No ads created yet</p>
                 <Button className="mt-4" asChild>
-                  <Link href="/app/ads/new">Create Your First Ad</Link>
+                  <Link href="/ads/new">Create Your First Ad</Link>
                 </Button>
               </div>
             ) : (
@@ -207,7 +208,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-1">
+        <Card className="col-span-1 shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>
@@ -215,7 +216,7 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Link href="/app/brands/new" className="block">
+            <Link href="/brands/new" className="block">
               <Button
                 variant="outline"
                 className="w-full justify-start"
@@ -226,7 +227,7 @@ export default function DashboardPage() {
               </Button>
             </Link>
 
-            <Link href="/app/ads/new" className="block">
+            <Link href="/ads/new" className="block">
               <Button
                 variant="outline"
                 className="w-full justify-start"

@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 interface ImageUploaderProps {
   images: string[];
-  onImagesChange: (images: string[]) => void;
+  onImagesChange: (urls: string[], files: File[]) => void;
 }
 
 export default function ImageUploader({
@@ -20,16 +20,17 @@ export default function ImageUploader({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      const newImages = Array.from(files)
-        .slice(0, 4 - images.length)
-        .map((file) => URL.createObjectURL(file));
-
-      onImagesChange([...images, ...newImages]);
+      const newFiles = Array.from(files).slice(0, 4 - images.length);
+      const newImages = newFiles.map((file) => URL.createObjectURL(file));
+      onImagesChange([...images, ...newImages], newFiles);
     }
   };
 
   const removeImage = (index: number) => {
-    onImagesChange(images.filter((_, i) => i !== index));
+    onImagesChange(
+      images.filter((_, i) => i !== index),
+      []
+    );
   };
 
   const handleDrop = useCallback(
@@ -41,11 +42,9 @@ export default function ImageUploader({
 
       const files = e.dataTransfer.files;
       if (files && files.length > 0) {
-        const newImages = Array.from(files)
-          .slice(0, 4 - images.length)
-          .map((file) => URL.createObjectURL(file));
-
-        onImagesChange([...images, ...newImages]);
+        const newFiles = Array.from(files).slice(0, 4 - images.length);
+        const newImages = newFiles.map((file) => URL.createObjectURL(file));
+        onImagesChange([...images, ...newImages], newFiles);
       }
     },
     [images, onImagesChange]

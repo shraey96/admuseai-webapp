@@ -13,9 +13,16 @@ interface SidebarItemProps {
   label: string;
   href: string;
   isActive: boolean;
+  isCollapsed: boolean;
 }
 
-function SidebarItem({ icon, label, href, isActive }: SidebarItemProps) {
+function SidebarItem({
+  icon,
+  label,
+  href,
+  isActive,
+  isCollapsed,
+}: SidebarItemProps) {
   return (
     <Link href={href} className="w-full">
       <Button
@@ -26,7 +33,14 @@ function SidebarItem({ icon, label, href, isActive }: SidebarItemProps) {
         )}
       >
         {icon}
-        <span>{label}</span>
+        <span
+          className={cn(
+            "transition-all duration-300",
+            isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+          )}
+        >
+          {label}
+        </span>
       </Button>
     </Link>
   );
@@ -42,10 +56,10 @@ export function Sidebar() {
   };
 
   const isActive = (path: string) => {
-    if (path === "/app" && pathname === "/app") {
+    if (path === "/" && pathname === "/") {
       return true;
     }
-    if (path !== "/app" && pathname.startsWith(path)) {
+    if (path !== "/" && pathname.startsWith(path)) {
       return true;
     }
     return false;
@@ -54,15 +68,15 @@ export function Sidebar() {
   return (
     <div
       className={cn(
-        "relative h-full border-r bg-background transition-all duration-300",
+        "relative h-full border-r bg-white shadow-lg transition-all duration-300",
         isCollapsed ? "w-16" : "w-64"
       )}
     >
       <div className="flex h-16 items-center justify-between px-4 border-b">
         <h1
           className={cn(
-            "font-bold text-lg transition-opacity",
-            isCollapsed ? "opacity-0 w-0" : "opacity-100"
+            "font-bold text-lg transition-opacity duration-300 font-sans tracking-tight",
+            isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
           )}
         >
           AdMuseAI
@@ -74,39 +88,43 @@ export function Sidebar() {
 
       <div className="space-y-1 py-4 px-2">
         <SidebarItem
-          icon={<Home size={20} />}
+          icon={<Home size={20} className="text-blue-600" />}
           label="Dashboard"
-          href="/app"
-          isActive={isActive("/app")}
+          href="/dashboard"
+          isActive={isActive("/dashboard")}
+          isCollapsed={isCollapsed}
         />
         <SidebarItem
-          icon={<Tag size={20} />}
-          label="Brands"
-          href="/app/brands"
-          isActive={isActive("/app/brands")}
-        />
-        <SidebarItem
-          icon={<ImagePlus size={20} />}
+          icon={<ImagePlus size={20} className="text-purple-600" />}
           label="Ads"
-          href="/app/ads"
-          isActive={isActive("/app/ads")}
+          href="/ads"
+          isActive={isActive("/ads")}
+          isCollapsed={isCollapsed}
         />
         <SidebarItem
-          icon={<User size={20} />}
+          icon={<User size={20} className="text-green-600" />}
           label="Profile"
-          href="/app/profile"
-          isActive={isActive("/app/profile")}
+          href="/profile"
+          isActive={isActive("/profile")}
+          isCollapsed={isCollapsed}
         />
       </div>
 
       <div className="absolute bottom-4 w-full px-2">
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 text-muted-foreground"
+          className="w-full justify-start gap-3 text-muted-foreground hover:bg-red-50 transition-colors"
           onClick={() => signOut()}
         >
-          <LogOut size={20} />
-          {!isCollapsed && <span>Sign Out</span>}
+          <LogOut size={20} className="text-red-500" />
+          <span
+            className={cn(
+              "transition-all duration-300",
+              isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            )}
+          >
+            Sign Out
+          </span>
         </Button>
       </div>
     </div>

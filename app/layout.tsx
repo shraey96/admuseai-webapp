@@ -190,23 +190,17 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <AuthProvider>
-          <CreditProvider>
-            <TooltipProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="light"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <Header />
-                {children}
-                <Footer />
-              </ThemeProvider>
-              <Toaster />
-            </TooltipProvider>
-          </CreditProvider>
-        </AuthProvider>
+        <TooltipProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+          <Toaster />
+        </TooltipProvider>
       </body>
     </html>
   );

@@ -76,7 +76,7 @@ export default function BrandTable({
                 {new Date(brand.created_at).toLocaleDateString()}
               </td>
               <td className="px-4 py-2 flex gap-2">
-                <Link href={`/app/brands/${brand.id}`}>
+                <Link href={`/brands/${brand.id}`}>
                   <Button size="icon" variant="outline" aria-label="Edit Brand">
                     <Pencil className="h-4 w-4" />
                   </Button>

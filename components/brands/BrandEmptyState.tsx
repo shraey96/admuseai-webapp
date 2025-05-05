@@ -13,7 +13,7 @@ export default function BrandEmptyState() {
         Get started by creating your first brand.
       </p>
       <Button asChild>
-        <Link href="/app/brands/new">Create Brand</Link>
+        <Link href="/brands/new">Create Brand</Link>
       </Button>
     </div>
   );
