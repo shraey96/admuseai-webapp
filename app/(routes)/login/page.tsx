@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const [isSendingMagicLink, setIsSendingMagicLink] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,7 +77,13 @@ export default function LoginPage() {
       <div className="pointer-events-none select-none absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-purple-200 opacity-30 blur-3xl z-0" />
       {/* Left: Minimal Login Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center py-12 px-4 relative z-10">
-        <div className="w-full max-w-sm">
+        <motion.div
+          key={isSignUpMode ? "signup" : "login"}
+          initial={{ opacity: 0.8, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="w-full max-w-sm"
+        >
           <div className="backdrop-blur-xl bg-white/60 border border-white/40 shadow-xl rounded-2xl p-8 flex flex-col items-center">
             {/* Logo */}
             <Image
@@ -87,7 +95,7 @@ export default function LoginPage() {
             />
             {/* Welcome */}
             <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">
-              Welcome back!
+              {isSignUpMode ? "Create an account" : "Welcome back!"}
             </h2>
             {/* Google login placeholder */}
             <Button
@@ -161,6 +169,8 @@ export default function LoginPage() {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Sending...
                   </>
+                ) : isSignUpMode ? (
+                  "Sign up with Email"
                 ) : (
                   "Sign in with Email"
                 )}
@@ -169,13 +179,15 @@ export default function LoginPage() {
             {/* Sign up link */}
             <div className="w-full text-center mt-2 text-sm">
               <span>
-                Don't have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="text-indigo-600 hover:underline"
+                {isSignUpMode
+                  ? "Already have an account? "
+                  : "Don't have an account? "}
+                <button
+                  onClick={() => setIsSignUpMode(!isSignUpMode)}
+                  className="text-indigo-600 hover:underline focus:outline-none"
                 >
-                  Sign up
-                </Link>
+                  {isSignUpMode ? "Log in" : "Sign up"}
+                </button>
               </span>
             </div>
             {/* Error message (minimal) */}
@@ -191,7 +203,7 @@ export default function LoginPage() {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
       {/* Right: Three horizontal MediaScroller rows, responsive cards */}
       <div className="hidden md:flex w-1/2 items-center justify-center relative z-10">

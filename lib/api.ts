@@ -208,20 +208,6 @@ export async function createAdWithImages(payload: {
       }
     });
 
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
-
-    return {
-      success: true,
-      ad_id: "14e0689c-e419-4820-b989-93c84b12d93d",
-      images: [
-        "https://eglwedwlixqeqiteygec.supabase.co/storage/v1/object/public/ai-generated-ads/ad-generation/results/2bab8236-9318-41c0-9450-58e8c7bb173c-generated-ad-1.png",
-        "https://eglwedwlixqeqiteygec.supabase.co/storage/v1/object/public/ai-generated-ads/ad-generation/results/5a0054e1-15b5-48a0-b96c-ce61a96b51bc-generated-ad-2.png",
-      ],
-      credits_used: 4,
-    };
-
     // Use the URL pattern from the curl example
     // If FUNCTIONS_URL is already set up, use that; otherwise use the default pattern
     const GENERATE_AD_URL = `${FUNCTIONS_URL}/generate-ad`;
