@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 interface DashboardStats {
   totalAds: number;
@@ -38,53 +39,54 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    async function fetchStats() {
       if (!user) return;
-
       setIsLoading(true);
       try {
-        // Get total ads count
-        const { count: adsCount, error: adsError } = await supabase
-          .from("ads")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id);
-
-        // Get total brands count
-        const { count: brandsCount, error: brandsError } = await supabase
-          .from("brands")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id);
-
-        // Get recent activity (most recent ads)
-        const { data: recentAds, error: recentError } = await supabase
-          .from("ads")
-          .select("*")
+        const { data: adsData, error: adsError } = await supabase
+          .from("generated_ads") // Ensure this table name is correct
+          .select("id, name, created_at, result_urls, status")
           .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(5);
+          .order("created_at", { ascending: false });
 
-        if (adsError || brandsError || recentError) {
-          console.error("Error fetching stats:", {
-            adsError,
-            brandsError,
-            recentError,
-          });
-        }
+        if (adsError) throw adsError;
+
+        // For totalBrands, assuming you have a 'brands' table or a way to count them
+        // This is a placeholder count. Replace with actual logic if available.
+        const brandsCount = 0;
 
         setStats({
-          totalAds: adsCount || 0,
-          totalBrands: brandsCount || 0,
-          recentActivity: recentAds || [],
+          totalAds: adsData?.length || 0,
+          totalBrands: brandsCount, // Correctly include totalBrands
+          recentActivity: adsData?.slice(0, 5) || [],
         });
       } catch (error) {
-        console.error("Failed to fetch dashboard stats:", error);
+        console.error("Error fetching dashboard stats:", error);
+        // Optionally set stats to a default error state or empty
+        setStats({
+          totalAds: 0,
+          totalBrands: 0,
+          recentActivity: [],
+        });
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
     fetchStats();
   }, [user]);
+
+  const animationProps = {
+    animate: {
+      scale: [1, 1.03, 1],
+    },
+    transition: {
+      duration: 2.5,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+    className: "flex-shrink-0",
+  };
 
   return (
     <div className="space-y-6">
@@ -94,16 +96,18 @@ export default function DashboardPage() {
         </h1>
 
         <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/ads/new">
-              <ImagePlus className="h-4 w-4 mr-2" />
-              Create Ad
-            </Link>
-          </Button>
+          <motion.div {...animationProps}>
+            <Button asChild>
+              <Link href="/ads/new">
+                <ImagePlus className="h-4 w-4 mr-2" />
+                Create Ad
+              </Link>
+            </Button>
+          </motion.div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -116,7 +120,7 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
+        {/* <Card className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <TagIcon className="h-4 w-4 text-purple-500" /> Total Brands
@@ -127,7 +131,7 @@ export default function DashboardPage() {
               {isLoading ? "..." : stats.totalBrands}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
         <Card className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -141,7 +145,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <Card className="col-span-1 shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
@@ -156,9 +160,14 @@ export default function DashboardPage() {
               <div className="py-8 text-center">
                 <History className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
                 <p className="mt-2 text-muted-foreground">No ads created yet</p>
-                <Button className="mt-4" asChild>
-                  <Link href="/ads/new">Create Your First Ad</Link>
-                </Button>
+                <motion.div
+                  {...animationProps}
+                  className={`${animationProps.className} mt-4 inline-block`}
+                >
+                  <Button asChild>
+                    <Link href="/ads/new">Create Your First Ad</Link>
+                  </Button>
+                </motion.div>
               </div>
             ) : (
               <div className="space-y-4">
@@ -179,11 +188,7 @@ export default function DashboardPage() {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="truncate font-medium">
-                        {ad.prompt.length > 60
-                          ? `${ad.prompt.substring(0, 60)}...`
-                          : ad.prompt}
-                      </div>
+                      <div className="truncate font-medium">{ad.name}</div>
                       <div className="text-sm text-muted-foreground">
                         {new Date(ad.created_at).toLocaleString()}
                       </div>
@@ -208,7 +213,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-1 shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
+        {/* <Card className="col-span-1 shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>
@@ -259,7 +264,7 @@ export default function DashboardPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

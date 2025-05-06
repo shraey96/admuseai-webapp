@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import ReactConfetti from "react-confetti";
-import { useState } from "react";
 
 interface ConfettiPortalProps {
   show?: boolean;

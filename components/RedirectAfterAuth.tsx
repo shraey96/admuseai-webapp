@@ -8,24 +8,24 @@ export default function RedirectAfterAuth() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  console.log("searchParams", searchParams.get("code"));
+
   useEffect(() => {
     // Handle Supabase auth return with code in URL
     const handleAuthReturn = async () => {
       // Check if we have a code in the URL
-      const code = searchParams.get("code");
 
-      if (code) {
-        try {
-          // Exchange code for session
-          await supabase.auth.exchangeCodeForSession(code);
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: "hash",
+        type: "email",
+      });
 
-          // Get redirectTo from URL or default to /dashboard
-          const redirectTo = searchParams.get("redirectTo") || "/dashboard";
-          router.push(redirectTo);
-        } catch (error) {
-          console.error("Error exchanging code for session:", error);
-          router.push("/login?error=auth");
-        }
+      if (!error) {
+        const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+        router.push(redirectTo);
+      } else {
+        console.error("Error verifying OTP:", error);
+        router.push("/login?error=auth");
       }
     };
 

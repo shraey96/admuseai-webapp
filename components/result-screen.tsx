@@ -6,7 +6,7 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
-  AlertCircle,
+  ExternalLink,
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -24,6 +24,7 @@ export default function ResultScreen({
   onGenerateAnother,
 }: ResultScreenProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isImageHovered, setIsImageHovered] = useState(false);
   const currentImage = images[activeIndex];
   const { toast } = useToast();
 
@@ -96,6 +97,8 @@ export default function ResultScreen({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
+          onMouseEnter={() => setIsImageHovered(true)}
+          onMouseLeave={() => setIsImageHovered(false)}
         >
           <Image
             src={currentImage || "/placeholder.svg"}
@@ -103,6 +106,20 @@ export default function ResultScreen({
             fill
             className="object-contain rounded-2xl"
           />
+
+          {isImageHovered && currentImage && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                window.open(currentImage, "_blank", "noopener,noreferrer")
+              }
+              className="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white backdrop-blur-sm h-9 w-9 rounded-full shadow-md z-10"
+              title="Open image in new tab"
+            >
+              <ExternalLink className="h-5 w-5" />
+            </Button>
+          )}
 
           {images.length > 1 && (
             <>
@@ -154,20 +171,6 @@ export default function ResultScreen({
             ))}
           </motion.div>
         )}
-
-        {/* Info message */}
-        <div className="mb-6 p-3 bg-[#EEF2FF] rounded-xl border border-[#6366f1]/20">
-          <div className="flex items-start space-x-3">
-            <AlertCircle className="h-5 w-5 text-[#6366f1] mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-[#4338ca]">
-              <p>
-                All image links have been copied to your clipboard. Images are
-                available for 24 hours only - please download them before
-                leaving. You will NOT be emailed the images.
-              </p>
-            </div>
-          </div>
-        </div>
 
         {/* Action buttons */}
         <motion.div

@@ -1,8 +1,9 @@
 import React, { useRef, useCallback, useState } from "react";
 import { Label } from "@/components/ui/label";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, X, ZoomIn } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import ImagePreviewDialog from "./image-preview-dialog";
 
 interface ImageUploaderProps {
   images: string[];
@@ -16,6 +17,9 @@ export default function ImageUploader({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
+
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [previewStartIndex, setPreviewStartIndex] = useState(0);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -71,6 +75,11 @@ export default function ImageUploader({
     }
   }, []);
 
+  const openImagePreview = (index: number) => {
+    setPreviewStartIndex(index);
+    setIsPreviewModalOpen(true);
+  };
+
   return (
     <div>
       <Label
@@ -78,9 +87,6 @@ export default function ImageUploader({
         className="text-sm font-medium text-zinc-700 mb-2 sm:mb-3 block"
       >
         <span className="flex items-center">
-          <span className="inline-flex h-6 w-6 rounded-full bg-indigo-500 items-center justify-center text-white text-xs font-medium mr-2">
-            1
-          </span>
           Upload Images{" "}
           <span className="text-xs text-zinc-500 ml-2">
             ({images.length}/4)
@@ -141,26 +147,34 @@ export default function ImageUploader({
           onDragLeave={handleDragLeave}
         >
           {images.map((img, index) => (
-            <motion.div
-              key={index}
-              className="relative aspect-square border rounded-xl overflow-hidden shadow-sm group"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Image
-                src={img}
-                alt={`Uploaded image ${index + 1}`}
-                fill
-                className="object-cover"
-              />
-              <button
-                onClick={() => removeImage(index)}
-                className="absolute top-1 right-1 p-1 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 transition-colors"
+            <div key={index} className="group relative">
+              <motion.div
+                className="aspect-square border rounded-xl overflow-hidden shadow-sm group"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
               >
-                <X className="h-4 w-4" />
+                <Image
+                  src={img}
+                  alt={`Uploaded image ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+                <button
+                  onClick={() => removeImage(index)}
+                  className="absolute top-1 right-1 p-1 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 transition-colors z-20"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </motion.div>
+              <button
+                onClick={() => openImagePreview(index)}
+                className="absolute inset-0 m-auto bg-black/30 hover:bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 cursor-pointer"
+                aria-label="Zoom image"
+              >
+                <ZoomIn className="h-5 w-5" />
               </button>
-            </motion.div>
+            </div>
           ))}
           {images.length < 4 && (
             <motion.div
@@ -189,6 +203,14 @@ export default function ImageUploader({
             </motion.div>
           )}
         </div>
+      )}
+      {isPreviewModalOpen && (
+        <ImagePreviewDialog
+          isOpen={isPreviewModalOpen}
+          onClose={() => setIsPreviewModalOpen(false)}
+          images={images}
+          startIndex={previewStartIndex}
+        />
       )}
     </div>
   );

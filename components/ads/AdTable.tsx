@@ -1,27 +1,10 @@
 import React, { useState } from "react";
 import { Tables } from "@/lib/supabaseClient";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import {
-  Loader2,
-  Pencil,
-  Trash2,
-  Image as ImageIcon,
-  Download,
-} from "lucide-react";
-import Image from "next/image";
-import { Card, CardTitle } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { downloadImage } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import DeleteAdDialog from "@/components/ads/DeleteAdDialog";
 import { useToast } from "@/hooks/use-toast";
+import AdItem from "./AdItem";
 
 interface AdTableProps {
   ads: Tables["ads"][];
@@ -80,92 +63,17 @@ export default function AdTable({ ads, onDelete, loading }: AdTableProps) {
 
   return (
     <TooltipProvider>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {ads.map((ad) => {
-          const hasImage = ad.result_urls && ad.result_urls.length > 0;
-          const imageUrl = hasImage ? ad.result_urls[0] : null;
-          return (
-            <Card
-              key={ad.id}
-              className="shadow-lg rounded-2xl border border-gray-200 bg-white animate-fade-in p-0 flex flex-col"
-            >
-              {/* Image */}
-              <div className="relative w-full aspect-square rounded-t-2xl overflow-hidden bg-muted">
-                {imageUrl ? (
-                  <Image
-                    src={imageUrl}
-                    alt={ad.name || "Ad image"}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                    <ImageIcon className="h-10 w-10 mb-1 text-gray-400" />
-                    <span className="text-xs">No generated images yet</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 flex flex-col justify-between p-5">
-                <div className="flex items-center justify-between mb-2">
-                  <CardTitle className="text-base font-semibold font-sans line-clamp-1 mb-0">
-                    {ad.name || "Untitled Ad"}
-                  </CardTitle>
-                  <div className="flex gap-2">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 hover:bg-blue-100"
-                          asChild
-                        >
-                          <Link href={`/ads/${ad.id}`}>
-                            <Pencil className="h-4 w-4 text-blue-600" />
-                          </Link>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Edit Ad</TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 hover:bg-red-100"
-                          onClick={() => handleDeleteClick(ad.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Delete Ad</TooltipContent>
-                    </Tooltip>
-                  </div>
-                </div>
-                {/* Download Button */}
-                {imageUrl && (
-                  <Button
-                    variant="outline"
-                    className="w-full mt-2 flex items-center justify-center gap-2"
-                    onClick={() =>
-                      downloadImage(imageUrl, `${ad.name || "ad-image"}.png`)
-                    }
-                  >
-                    <Download className="h-4 w-4" /> Download
-                  </Button>
-                )}
-              </div>
-            </Card>
-          );
-        })}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {ads.map((ad) => (
+          <AdItem key={ad.id} ad={ad} onDeleteClick={handleDeleteClick} />
+        ))}
       </div>
 
       <DeleteAdDialog
         open={deleteDialogState.open}
         onOpenChange={(open) => setDeleteDialogState({ open, adId: null })}
         onConfirm={handleDeleteConfirm}
-        isDeleting={loading}
+        isDeleting={!!loading}
       />
     </TooltipProvider>
   );

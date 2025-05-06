@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCredits } from "@/context/CreditContext";
 import { Button } from "@/components/ui/button";
 import { BadgePlus, Coins, Loader2 } from "lucide-react";
@@ -9,9 +10,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 export function CreditDisplay() {
   const { credits, isLoading } = useCredits();
+
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -21,6 +25,8 @@ export function CreditDisplay() {
       </div>
     );
   }
+
+  const isLowOnCredits = credits === 0;
 
   return (
     <div className="flex items-center gap-2">
@@ -38,7 +44,16 @@ export function CreditDisplay() {
         </Tooltip>
       </TooltipProvider>
 
-      <Button size="sm" variant="outline" className="gap-1">
+      <Button
+        size="sm"
+        variant={isLowOnCredits ? "default" : "outline"}
+        className={cn(
+          "gap-1",
+          isLowOnCredits &&
+            "bg-yellow-400 hover:bg-yellow-500 text-yellow-900 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:text-yellow-950 border-yellow-500 dark:border-yellow-600"
+        )}
+        onClick={() => router.push("/top-up")}
+      >
         <BadgePlus className="h-4 w-4" />
         <span className="hidden sm:inline">Top Up</span>
       </Button>

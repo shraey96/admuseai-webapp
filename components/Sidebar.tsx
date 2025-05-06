@@ -3,7 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Tag, ImagePlus, Menu, X, User, LogOut } from "lucide-react";
+import {
+  Home,
+  Tag,
+  ImagePlus,
+  Menu,
+  X,
+  User,
+  LogOut,
+  CreditCard,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -99,6 +108,13 @@ export function Sidebar() {
           label="Ads"
           href="/ads"
           isActive={isActive("/ads")}
+          isCollapsed={isCollapsed}
+        />
+        <SidebarItem
+          icon={<CreditCard size={20} className="text-green-600" />}
+          label="Top Up"
+          href="/top-up"
+          isActive={isActive("/top-up")}
           isCollapsed={isCollapsed}
         />
         <SidebarItem

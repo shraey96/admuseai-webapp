@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import DeleteAdDialog from "@/components/ads/DeleteAdDialog";
+import ResultModal from "@/components/result-modal";
 
 export default function AdEditPage() {
   const router = useRouter();
@@ -25,6 +26,8 @@ export default function AdEditPage() {
   const [fetching, setFetching] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { toast } = useToast();
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [generatedImageUrls, setGeneratedImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isNew) {
@@ -59,8 +62,22 @@ export default function AdEditPage() {
       await refreshCredits();
       toast({ title: "Ad created" });
 
-      // here we have to show the confetti screen
-      router.push("/ads");
+      // Show the result modal with the generated images
+      if (
+        result.data &&
+        result.data.images &&
+        Array.isArray(result.data.images)
+      ) {
+        setGeneratedImageUrls(result.data.images);
+        setShowResultModal(true);
+      } else {
+        // Fallback if images are not in the expected format, navigate to ads list
+        console.error(
+          "Generated images not found in the expected format in the response:",
+          result.data
+        );
+        router.push("/ads");
+      }
     }
   };
 
@@ -80,6 +97,18 @@ export default function AdEditPage() {
     }
     setDeleting(false);
     setShowDeleteDialog(false);
+  };
+
+  const handleCloseResultModal = () => {
+    setShowResultModal(false);
+    router.push("/ads");
+  };
+
+  const handleGenerateAnotherFromResults = () => {
+    setShowResultModal(false);
+    // If the current page is already /ads/new, AdWizard might reset itself or be ready.
+    // If user was regenerating an existing ad, this takes them to a fresh form.
+    router.push("/ads/new");
   };
 
   if (fetching) {
@@ -128,6 +157,7 @@ export default function AdEditPage() {
           <div className="flex justify-center">
             <div className="w-full max-w-2xl">
               <AdWizard
+                isNew={isNew}
                 initialValues={
                   ad
                     ? {
@@ -185,6 +215,14 @@ export default function AdEditPage() {
         onConfirm={handleDelete}
         isDeleting={deleting}
       />
+      {showResultModal && (
+        <ResultModal
+          isOpen={showResultModal}
+          onClose={handleCloseResultModal}
+          images={generatedImageUrls}
+          onGenerateAnother={handleGenerateAnotherFromResults}
+        />
+      )}
     </div>
   );
 }

@@ -55,6 +55,7 @@ interface AdWizardProps {
   onSubmit: (values: AdFormPayload) => Promise<void>;
   initialValues?: Partial<AdFormPayload> & { imageUrls?: string[] };
   loading: boolean;
+  isNew?: boolean;
 }
 
 export type AdFormPayload = {
@@ -280,8 +281,23 @@ function StepContent({
       </div>
       <div className="my-6 border-t border-gray-200" />
       <div className="mb-6">
-        <label className="text-sm font-medium mb-1 block">Ad Name</label>
+        <div className="flex items-center">
+          <Label htmlFor="adName" className="text-sm font-medium mb-1 block">
+            Ad Name <span className="text-red-500">*</span>
+          </Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-gray-400 ml-1 cursor-pointer" />
+              </TooltipTrigger>
+              <TooltipContent className="bg-black text-white">
+                <p>This field is mandatory.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <Input
+          id="adName"
           type="text"
           value={values.name || ""}
           onChange={(e) =>
@@ -299,7 +315,6 @@ function StepContent({
 }
 
 function renderStepFooter({
-  currentStepIndex,
   handleBack,
   handleNext,
   isStepValid,
@@ -309,7 +324,6 @@ function renderStepFooter({
   nextLabel = "Next",
   backLabel = "Back",
 }: {
-  currentStepIndex: number | string;
   handleBack: () => void;
   handleNext?: () => void;
   isStepValid?: boolean;
@@ -346,6 +360,7 @@ export default function AdWizard({
   onSubmit,
   initialValues,
   loading,
+  isNew,
 }: AdWizardProps) {
   // Step indices:
   // -1: Image upload
@@ -685,10 +700,11 @@ export default function AdWizard({
                 <Button
                   variant="outline"
                   onClick={handleBack}
-                  disabled={loading}
+                  disabled={loading || !isNew}
                 >
                   Back
                 </Button>
+
                 <Button
                   onClick={() => setShowConfirmModal(true)}
                   disabled={isConfirmDisabled}
@@ -746,7 +762,8 @@ export default function AdWizard({
                     name: values.name,
                     brandId: values.brandId,
                     quality: values.quality,
-                    adType: selectedTemplate,
+                    adType:
+                      selectedTemplate === null ? undefined : selectedTemplate,
                   };
                   onSubmit(payload);
                 }}
