@@ -18,6 +18,9 @@ export default function TopUpPage() {
   const handlePurchase = async (priceId: string) => {
     // TODO: Implement purchase logic
     console.log("Purchase initiated for:", priceId);
+
+    // redirect to link:
+    // https://test.checkout.dodopayments.com/buy/pdt_47jj19lcFE23sQv2ZoYxc?quantity=1&metadata_user_id=f218cdf0-fe0e-48db-9d7c-cc325cc9a368
   };
 
   return (

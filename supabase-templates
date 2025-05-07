@@ -1,0 +1,72 @@
+## Login Template
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login to AdMuseAI</title>
+    <style>
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background-color: #f9fafb;
+        padding: 40px 0;
+        color: #333;
+      }
+      .container {
+        max-width: 480px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 32px;
+        text-align: center;
+      }
+      .logo {
+        max-width: 140px;
+        margin-bottom: 24px;
+      }
+      h2 {
+        color: #111827;
+        margin-bottom: 16px;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 24px;
+        background-color: #6366f1;
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+      }
+      .button:hover {
+        background-color: #4f46e5;
+      }
+      .footer {
+        margin-top: 32px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="https://admuseai.com/images/admuse.png"
+        alt="AdMuseAI Logo"
+        class="logo"
+      />
+      <h2>Welcome to AdMuseAI 👋</h2>
+      <p>Click the button below to securely log in to your account:</p>
+      <a href="{{ .ConfirmationURL }}" class="button">Access Your Account</a>
+      <div class="footer">
+        Didn’t request this? No worries—just ignore this email.
+      </div>
+    </div>
+  </body>
+</html>

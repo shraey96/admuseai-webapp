@@ -1,22 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MediaScroller from "@/components/media-scroller";
 import { getHeroSamplesGrid } from "@/constants/hero-samples";
-import { useIsMobile } from "@/components/ui/use-mobile";
 
 const HERO_SAMPLES_GRID = getHeroSamplesGrid(3);
 
-export default function LoginPage() {
+function LoginClientPage() {
   const { user, signInWithGoogle, signInWithMagicLink, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [isSendingMagicLink, setIsSendingMagicLink] = useState(false);
@@ -28,7 +25,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/dashboard";
   const error = searchParams.get("error");
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (user) {
@@ -224,5 +220,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <p className="flex h-screen w-full items-center justify-center">
+          Loading...
+        </p>
+      }
+    >
+      <LoginClientPage />
+    </Suspense>
   );
 }

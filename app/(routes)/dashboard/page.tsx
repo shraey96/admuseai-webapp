@@ -13,14 +13,15 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   ImagePlus,
-  TagIcon,
   History,
   TrendingUp,
   AlertCircle,
+  Type,
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { getTemplateName } from "@/lib/prompt-wizard-config";
+import { useAds } from "@/hooks/useAds";
 
 interface DashboardStats {
   totalAds: number;
@@ -31,25 +32,29 @@ interface DashboardStats {
 export default function DashboardPage() {
   const { user } = useAuth();
   const { credits } = useCredits();
+  const { getAds, isLoading: adsLoading } = useAds();
   const [stats, setStats] = useState<DashboardStats>({
     totalAds: 0,
     totalBrands: 0,
     recentActivity: [],
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchStats() {
-      if (!user) return;
-      setIsLoading(true);
-      try {
-        const { data: adsData, error: adsError } = await supabase
-          .from("generated_ads") // Ensure this table name is correct
-          .select("id, name, created_at, result_urls, status")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
+      if (!user) {
+        setStats({ totalAds: 0, totalBrands: 0, recentActivity: [] });
+        setError(null);
+        return;
+      }
 
-        if (adsError) throw adsError;
+      setError(null);
+      try {
+        const { data: adsData, error: adsError } = await getAds();
+
+        if (adsError) {
+          throw new Error(adsError);
+        }
 
         // For totalBrands, assuming you have a 'brands' table or a way to count them
         // This is a placeholder count. Replace with actual logic if available.
@@ -57,24 +62,24 @@ export default function DashboardPage() {
 
         setStats({
           totalAds: adsData?.length || 0,
-          totalBrands: brandsCount, // Correctly include totalBrands
+          totalBrands: brandsCount,
           recentActivity: adsData?.slice(0, 5) || [],
         });
-      } catch (error) {
-        console.error("Error fetching dashboard stats:", error);
-        // Optionally set stats to a default error state or empty
+      } catch (err) {
+        console.error("Error fetching dashboard stats:", err);
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
         setStats({
           totalAds: 0,
           totalBrands: 0,
           recentActivity: [],
         });
-      } finally {
-        setIsLoading(false);
       }
     }
 
     fetchStats();
-  }, [user]);
+  }, []);
 
   const animationProps = {
     animate: {
@@ -116,7 +121,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold font-sans">
-              {isLoading ? "..." : stats.totalAds}
+              {adsLoading ? "..." : stats.totalAds}
             </div>
           </CardContent>
         </Card>
@@ -152,9 +157,14 @@ export default function DashboardPage() {
             <CardDescription>Your most recent ads</CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
+            {adsLoading ? (
               <div className="py-8 text-center text-muted-foreground">
                 Loading recent activity...
+              </div>
+            ) : error ? (
+              <div className="py-8 text-center text-red-500">
+                <AlertCircle className="mx-auto h-12 w-12 opacity-50" />
+                <p className="mt-2">Error: {error}</p>
               </div>
             ) : stats.recentActivity.length === 0 ? (
               <div className="py-8 text-center">
@@ -171,43 +181,57 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {stats.recentActivity.map((ad) => (
-                  <div
-                    key={ad.id}
-                    className="flex items-center gap-4 border p-3 rounded-lg"
-                  >
-                    {ad.result_urls && ad.result_urls[0] ? (
-                      <img
-                        src={ad.result_urls[0]}
-                        alt={ad.prompt}
-                        className="h-12 w-12 object-cover rounded"
-                      />
-                    ) : (
-                      <div className="h-12 w-12 bg-muted rounded flex items-center justify-center">
-                        <ImagePlus className="h-6 w-6 text-muted-foreground" />
+                {stats.recentActivity.map((ad) => {
+                  console.log(ad);
+                  const templateName = ad.ad_type
+                    ? getTemplateName(ad.ad_type)
+                    : "N/A";
+                  return (
+                    <Link
+                      key={ad.id}
+                      href={`/ads/${ad.id}`}
+                      passHref
+                      className="block"
+                    >
+                      <div className="flex items-center gap-4 border p-3 rounded-lg hover:bg-gray-50 cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all duration-150">
+                        {ad.result_urls && ad.result_urls[0] ? (
+                          <img
+                            src={ad.result_urls[0]}
+                            alt={ad.prompt}
+                            className="h-12 w-12 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="h-12 w-12 bg-muted rounded flex items-center justify-center">
+                            <ImagePlus className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="truncate font-medium">{ad.name}</div>
+                          <div className="text-xs text-muted-foreground flex items-center mt-1">
+                            <Type className="h-3 w-3 mr-1 text-sky-500" />
+                            <span>{templateName}</span>
+                          </div>
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {new Date(ad.created_at).toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <div
+                            className={`text-xs px-2 py-1 rounded-full ${
+                              ad.status === "completed"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                : ad.status === "failed"
+                                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                            }`}
+                          >
+                            {ad.status}
+                          </div>
+                        </div>
                       </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="truncate font-medium">{ad.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(ad.created_at).toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <div
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          ad.status === "completed"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                            : ad.status === "failed"
-                            ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                        }`}
-                      >
-                        {ad.status}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </CardContent>

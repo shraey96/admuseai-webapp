@@ -35,4 +35,7 @@ next-env.d.ts
 
 # IDE
 .idea
-.vscode 
+.vscode
+
+# OpenNext output
+.open-next/ 
