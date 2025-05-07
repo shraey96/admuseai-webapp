@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MediaScroller from "@/components/media-scroller";
 import { getHeroSamplesGrid } from "@/constants/hero-samples";
+import Link from "next/link";
+import { BASE_APP_URL } from "@/lib/constants";
 
 const HERO_SAMPLES_GRID = getHeroSamplesGrid(3);
 
@@ -81,16 +83,27 @@ function LoginClientPage() {
           className="w-full max-w-sm"
         >
           <div className="backdrop-blur-xl bg-white/60 border border-white/40 shadow-xl rounded-2xl p-8 flex flex-col items-center">
-            {/* Logo */}
-            <Image
-              src="https://admuseai.com/images/admuse.png"
-              alt="AdMuse Logo"
-              width={48}
-              height={48}
-              className="mb-4 drop-shadow-md"
-            />
+            {/* Logo and App Name Flex Container */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Link href={BASE_APP_URL} passHref legacyBehavior>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="AdMuseAI Home"
+                >
+                  <Image
+                    src={`${BASE_APP_URL}/images/admuse.png`}
+                    alt="AdMuse Logo"
+                    width={48}
+                    height={48}
+                    className="drop-shadow-md cursor-pointer"
+                  />
+                </a>
+              </Link>
+              <h1 className="text-3xl font-bold text-gray-800">AdMuseAI</h1>
+            </div>
             {/* Welcome */}
-            <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">
+            <h2 className="text-xl font-semibold text-gray-700 mb-6 text-center">
               {isSignUpMode ? "Create an account" : "Welcome back!"}
             </h2>
             {/* Google login placeholder */}
