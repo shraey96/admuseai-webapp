@@ -95,10 +95,9 @@ function LoginClientPage() {
             </h2>
             {/* Google login placeholder */}
             <Button
-              // onClick={signInWithGoogle}
+              onClick={signInWithGoogle}
               variant="outline"
               className="w-full flex items-center justify-center gap-2 bg-white/80 hover:bg-white mb-3"
-              disabled
             >
               <svg
                 width="20"
@@ -131,7 +130,7 @@ function LoginClientPage() {
                   </clipPath>
                 </defs>
               </svg>
-              Continue with Google (coming soon)
+              Continue with Google
             </Button>
             {/* Divider */}
             <div className="relative w-full mb-3">
