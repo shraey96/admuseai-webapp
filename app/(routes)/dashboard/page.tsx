@@ -182,7 +182,6 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-4">
                 {stats.recentActivity.map((ad) => {
-                  console.log(ad);
                   const templateName = ad.ad_type
                     ? getTemplateName(ad.ad_type)
                     : "N/A";

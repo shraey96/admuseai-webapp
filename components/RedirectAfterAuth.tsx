@@ -25,7 +25,7 @@ export default function RedirectAfterAuth() {
         router.push(redirectTo);
       } else {
         console.error("Error verifying OTP:", error);
-        router.push("/login?error=auth");
+        router.push(`/login?error=auth&message=${error.message}`);
       }
     };
 
