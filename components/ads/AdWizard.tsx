@@ -227,6 +227,7 @@ function renderField(field: Field, value: any, onChange: (val: any) => void) {
               <RadioGroup
                 value={value || ""}
                 onValueChange={onChange}
+                disabled={field.disabled}
                 className="flex gap-4 mt-1"
               >
                 {field.options.map((opt) => (
@@ -390,9 +391,7 @@ export default function AdWizard({
     if (
       initialValues &&
       initialValues.prompt &&
-      initialValues.imageUrls &&
-      Array.isArray(initialValues.imageUrls) &&
-      initialValues.imageUrls.length > 0
+      initialValues?.imageUrls?.length > 0
     ) {
       setCurrentStepIndex(999);
       setImagePreviews(initialValues.imageUrls);
@@ -407,7 +406,7 @@ export default function AdWizard({
         adType: initialValues.adType,
       }));
     }
-  }, [initialValues]);
+  }, []);
 
   // Navigation helpers
   const goToImageUpload = () => {
@@ -757,7 +756,9 @@ export default function AdWizard({
                 onClick={() => {
                   const payload: AdFormPayload = {
                     prompt: reviewPrompt,
-                    images: imageFiles,
+                    images: isNew
+                      ? imageFiles
+                      : imageFiles.concat(imagePreviews),
                     numSamples: numImages,
                     name: values.name,
                     brandId: values.brandId,

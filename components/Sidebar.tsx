@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -16,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { BASE_APP_URL } from "@/lib/constants";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -82,14 +84,31 @@ export function Sidebar() {
       )}
     >
       <div className="flex h-16 items-center justify-between px-4 border-b">
-        <h1
+        <div
           className={cn(
-            "font-bold text-lg transition-opacity duration-300 font-sans tracking-tight",
-            isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            "flex items-center gap-2",
+            isCollapsed ? "justify-center w-full" : ""
           )}
         >
-          AdMuseAI
-        </h1>
+          <Image
+            src={`${BASE_APP_URL}/images/admuse.png`}
+            alt="AdMuse Logo"
+            width={32}
+            height={32}
+            className={cn(
+              "transition-all duration-300",
+              isCollapsed ? "opacity-100" : "opacity-100"
+            )}
+          />
+          <h1
+            className={cn(
+              "font-bold text-lg transition-opacity duration-300 font-sans tracking-tight",
+              isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            )}
+          >
+            AdMuseAI
+          </h1>
+        </div>
         <Button variant="ghost" size="icon" onClick={toggleSidebar}>
           {isCollapsed ? <Menu size={20} /> : <X size={20} />}
         </Button>

@@ -84,7 +84,7 @@ function ReviewStep({
           <Input
             type="number"
             min={1}
-            max={maxImages}
+            max={Math.min(maxImages, 4)}
             value={numImages}
             onChange={(e) => handleNumImagesChange(Number(e.target.value))}
             className="w-32"

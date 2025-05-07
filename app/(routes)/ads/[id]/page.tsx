@@ -49,7 +49,27 @@ export default function AdEditPage() {
   }, [id, isNew]);
 
   const handleSubmit = async (values: any) => {
-    const result = await createAd(values);
+    const payload = {
+      ...values,
+    };
+
+    if (!isNew) {
+      if (payload.images?.length === 0) {
+        payload.images = [
+          ...(ad?.original_image_urls || []),
+          ...(ad?.result_urls || []),
+        ];
+      }
+      payload.adType = ad?.ad_type;
+
+      if (values.name !== ad?.name) {
+        payload.name = values.name;
+      } else {
+        payload.name = `${payload.name}_${Date.now()}`;
+      }
+    }
+
+    const result = await createAd(payload);
 
     if (result.error) {
       toast({
