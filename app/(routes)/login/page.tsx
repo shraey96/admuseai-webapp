@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -10,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MediaScroller from "@/components/media-scroller";
 import { getHeroSamplesGrid } from "@/constants/hero-samples";
-import Link from "next/link";
 import { BASE_APP_URL } from "@/lib/constants";
 
 const HERO_SAMPLES_GRID = getHeroSamplesGrid(3);

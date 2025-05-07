@@ -112,9 +112,9 @@ export function Sidebar() {
         />
         <SidebarItem
           icon={<CreditCard size={20} className="text-green-600" />}
-          label="Top Up"
-          href="/top-up"
-          isActive={isActive("/top-up")}
+          label="Pricing"
+          href="/pricing"
+          isActive={isActive("/pricing")}
           isCollapsed={isCollapsed}
         />
         <SidebarItem

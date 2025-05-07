@@ -52,7 +52,7 @@ export function CreditDisplay() {
           isLowOnCredits &&
             "bg-yellow-400 hover:bg-yellow-500 text-yellow-900 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:text-yellow-950 border-yellow-500 dark:border-yellow-600"
         )}
-        onClick={() => router.push("/top-up")}
+        onClick={() => router.push("/pricing")}
       >
         <BadgePlus className="h-4 w-4" />
         <span className="hidden sm:inline">Top Up</span>

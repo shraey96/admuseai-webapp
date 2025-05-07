@@ -51,7 +51,6 @@ export default function AdEditPage() {
   const handleSubmit = async (values: any) => {
     const result = await createAd(values);
 
-    console.log(result);
     if (result.error) {
       toast({
         title: "Error",
