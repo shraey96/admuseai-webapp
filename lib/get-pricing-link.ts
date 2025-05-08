@@ -2,7 +2,10 @@ const dodoEnv = process.env.DODO_ENV || "test"; // Defaults to "test"
 
 export function getPricingLink(pricingId: string, userId: string): string {
   // Construct the base URL using the dodoEnv
-  const baseUrl = `https://${dodoEnv}.checkout.dodopayments.com/buy/`;
+  const baseUrl =
+    dodoEnv === "test"
+      ? `https://${dodoEnv}.checkout.dodopayments.com/buy/`
+      : "https://checkout.dodopayments.com/buy/";
 
   let suffix = "https://app.admuseai.com/payment-callback";
 
