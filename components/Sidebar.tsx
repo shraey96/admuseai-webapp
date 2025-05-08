@@ -59,7 +59,7 @@ function SidebarItem({
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = () => {
@@ -136,16 +136,25 @@ export function Sidebar() {
           isActive={isActive("/pricing")}
           isCollapsed={isCollapsed}
         />
-        <SidebarItem
-          icon={<User size={20} className="text-green-600" />}
-          label="Profile"
-          href="/profile"
-          isActive={isActive("/profile")}
-          isCollapsed={isCollapsed}
-        />
       </div>
 
-      <div className="absolute bottom-4 w-full px-2">
+      <div className="absolute bottom-4 w-full px-2 space-y-2">
+        <div
+          className={cn(
+            "flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground",
+            isCollapsed ? "justify-center" : ""
+          )}
+        >
+          <User size={18} className="text-blue-500 shrink-0" />
+          <span
+            className={cn(
+              "transition-all duration-300 truncate",
+              isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            )}
+          >
+            {user?.email}
+          </span>
+        </div>
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-muted-foreground hover:bg-red-50 transition-colors"
