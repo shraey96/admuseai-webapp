@@ -30,7 +30,17 @@ import {
 import { useCredits } from "@/context/CreditContext";
 import ReviewStep from "./ReviewStep";
 import { CREDITS_COUNT } from "@/lib/credits-constants";
-import { Box, Home, Users, Gift, Megaphone, Edit, Loader2 } from "lucide-react";
+import {
+  Box,
+  Home,
+  Users,
+  Gift,
+  Megaphone,
+  Edit,
+  Loader2,
+  ExternalLink,
+} from "lucide-react";
+import { BASE_WEBSITE_URL } from "@/lib/constants";
 
 import {
   AlertDialog,
@@ -91,9 +101,19 @@ function getIntentIcon(icon: string) {
 function IntentSelection({ onSelect }: { onSelect: (intent: string) => void }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-2">
-        What would you like to create?
-      </h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold">
+          What would you like to create?
+        </h2>
+        <a
+          href={`${BASE_WEBSITE_URL}/prompt-writing-guidelines`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-indigo-600 hover:text-indigo-800 text-sm flex items-center gap-1"
+        >
+          Creative Guidelines <ExternalLink className="h-3 w-3" />
+        </a>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {Object.entries(intentMapping).map(([intent, config]) => (
           <button
@@ -246,7 +266,16 @@ function renderField(field: Field, value: any, onChange: (val: any) => void) {
           case "creatable-select":
             return (
               <CreatableSelectComponent
-                options={field.options}
+                options={[
+                  {
+                    label: "Type to add your own custom option",
+                    value: "__instruction__",
+                    description:
+                      "You can select from the list or create your own",
+                    isDisabled: true,
+                  },
+                  ...field.options,
+                ]}
                 value={value || ""}
                 onChange={onChange}
                 placeholder={field.placeholder || ""}

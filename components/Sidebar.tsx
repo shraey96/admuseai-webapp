@@ -17,7 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { BASE_APP_URL } from "@/lib/constants";
+import { BASE_WEBSITE_URL } from "@/lib/constants";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -91,7 +91,7 @@ export function Sidebar() {
           )}
         >
           <Image
-            src={`${BASE_APP_URL}/images/admuse.png`}
+            src={`${BASE_WEBSITE_URL}/images/admuse.png`}
             alt="AdMuse Logo"
             width={32}
             height={32}

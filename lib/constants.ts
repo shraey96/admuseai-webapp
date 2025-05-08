@@ -15,4 +15,4 @@ export const getFormattedPrice = (): string => {
   return formatPrice(PRICING.CREDITS_PRICE);
 };
 
-export const BASE_APP_URL = "https://admuseai.com";
+export const BASE_WEBSITE_URL = "https://admuseai.com";

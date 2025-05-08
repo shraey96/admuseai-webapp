@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MediaScroller from "@/components/media-scroller";
 import { getHeroSamplesGrid } from "@/constants/hero-samples";
-import { BASE_APP_URL } from "@/lib/constants";
+import { BASE_WEBSITE_URL } from "@/lib/constants";
 import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 const HERO_SAMPLES_GRID = getHeroSamplesGrid(3);
@@ -103,14 +103,14 @@ function LoginClientPage() {
           <div className="backdrop-blur-xl bg-white/60 border border-white/40 shadow-xl rounded-2xl p-8 flex flex-col items-center">
             {/* Logo and App Name Flex Container */}
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Link href={BASE_APP_URL} passHref legacyBehavior>
+              <Link href={BASE_WEBSITE_URL} passHref legacyBehavior>
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="AdMuseAI Home"
                 >
                   <Image
-                    src={`${BASE_APP_URL}/images/admuse.png`}
+                    src={`${BASE_WEBSITE_URL}/images/admuse.png`}
                     alt="AdMuse Logo"
                     width={48}
                     height={48}

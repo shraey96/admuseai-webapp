@@ -16,7 +16,7 @@ import {
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { BASE_APP_URL } from "@/lib/constants";
+import { BASE_WEBSITE_URL } from "@/lib/constants";
 
 export type AdFormPayload = {
   name: string;
@@ -328,7 +328,7 @@ export default function AdForm({
         />
         <div className="mt-1.5 flex justify-between items-center">
           <a
-            href={`${BASE_APP_URL}/prompt-writing-guidelines`}
+            href={`${BASE_WEBSITE_URL}/prompt-writing-guidelines`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline inline-flex items-center gap-1"
