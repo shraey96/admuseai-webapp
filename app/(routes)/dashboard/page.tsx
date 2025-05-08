@@ -22,6 +22,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { getTemplateName } from "@/lib/prompt-wizard-config";
 import { useAds } from "@/hooks/useAds";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 interface DashboardStats {
   totalAds: number;
@@ -41,6 +42,11 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Track page view
+    trackAnalytics(ANALYTICS_EVENTS.PAGE_VIEWED, {
+      page: "Dashboard",
+    });
+
     async function fetchStats() {
       if (!user) {
         setStats({ totalAds: 0, totalBrands: 0, recentActivity: [] });
@@ -103,7 +109,14 @@ export default function DashboardPage() {
         <div className="flex gap-2">
           <motion.div {...animationProps}>
             <Button asChild>
-              <Link href="/ads/new">
+              <Link
+                href="/ads/new"
+                onClick={() =>
+                  trackAnalytics(ANALYTICS_EVENTS.DASHBOARD_CREATE_AD_CLICKED, {
+                    section: "recent_activity",
+                  })
+                }
+              >
                 <ImagePlus className="h-4 w-4 mr-2" />
                 Create Ad
               </Link>
@@ -175,7 +188,19 @@ export default function DashboardPage() {
                   className={`${animationProps.className} mt-4 inline-block`}
                 >
                   <Button asChild>
-                    <Link href="/ads/new">Create Your First Ad</Link>
+                    <Link
+                      href="/ads/new"
+                      onClick={() =>
+                        trackAnalytics(
+                          ANALYTICS_EVENTS.DASHBOARD_CREATE_AD_CLICKED,
+                          {
+                            section: "recent_activity",
+                          }
+                        )
+                      }
+                    >
+                      Create Your First Ad
+                    </Link>
                   </Button>
                 </motion.div>
               </div>
@@ -191,6 +216,12 @@ export default function DashboardPage() {
                       href={`/ads/${ad.id}`}
                       passHref
                       className="block"
+                      onClick={() =>
+                        trackAnalytics(ANALYTICS_EVENTS.DASHBOARD_AD_CLICKED, {
+                          ad_id: ad.id,
+                          ad_name: ad.name,
+                        })
+                      }
                     >
                       <div className="flex items-center gap-4 border p-3 rounded-lg hover:bg-gray-50 cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all duration-150">
                         {ad.result_urls && ad.result_urls[0] ? (

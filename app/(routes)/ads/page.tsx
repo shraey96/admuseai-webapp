@@ -10,6 +10,7 @@ import { Tables } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 export default function AdsPage() {
   const { getAds, deleteAd } = useAds();
@@ -40,6 +41,11 @@ export default function AdsPage() {
   };
 
   useEffect(() => {
+    // Track page view
+    trackAnalytics(ANALYTICS_EVENTS.PAGE_VIEWED, {
+      page: "Ads Listing",
+    });
+
     fetchAds();
     // eslint-disable-next-line
   }, []);
@@ -52,6 +58,14 @@ export default function AdsPage() {
       return nameMatch || adTypeMatch;
     });
     setFilteredAds(filtered);
+
+    // Only track search when user has entered something
+    if (searchTerm.length > 0) {
+      trackAnalytics(ANALYTICS_EVENTS.ADS_SEARCH, {
+        search_term: searchTerm,
+        results_count: filtered.length,
+      });
+    }
   }, [searchTerm, allAds]);
 
   const handleDelete = async (id: string) => {
@@ -62,6 +76,9 @@ export default function AdsPage() {
       setDeleting(null);
       return { success: false, error: result.error };
     }
+
+    trackAnalytics(ANALYTICS_EVENTS.AD_DELETED, { ad_id: id });
+
     setAllAds((prev) => prev.filter((a) => a.id !== id));
     setFilteredAds((prev) => prev.filter((a) => a.id !== id));
     setDeleting(null);
@@ -95,7 +112,16 @@ export default function AdsPage() {
             className="flex-shrink-0"
           >
             <Button asChild className="flex-shrink-0">
-              <Link href="/ads/new">Create Ad</Link>
+              <Link
+                href="/ads/new"
+                onClick={() =>
+                  trackAnalytics(ANALYTICS_EVENTS.CREATE_AD_CLICKED, {
+                    source: "ads_listing_page",
+                  })
+                }
+              >
+                Create Ad
+              </Link>
             </Button>
           </motion.div>
         </div>

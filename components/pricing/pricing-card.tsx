@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { getPricingLink } from "@/lib/get-pricing-link";
 import { PricingConfirmationModal } from "./pricing-confirmation-modal";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 interface PricingCardProps {
   plan: PricingPlan;
@@ -35,6 +36,15 @@ export default function PricingCard({ plan }: PricingCardProps) {
   const ctaLink = getPricingLink(plan.priceId, user?.id || "");
 
   const handleCTAClick = () => {
+    // Track pricing plan click
+    trackAnalytics(ANALYTICS_EVENTS.PRICING_PLAN_CLICKED, {
+      plan_name: plan.name,
+      plan_id: plan.id,
+      price: plan.price,
+      credits: plan.credits,
+      is_popular: plan.isPopular,
+    });
+
     if (!user?.id) {
       window.location.href = `/login?priceId=${plan.priceId}&redirect=/top-up`;
       return;
@@ -43,6 +53,14 @@ export default function PricingCard({ plan }: PricingCardProps) {
   };
 
   const handleConfirmPurchase = () => {
+    // Track pricing plan purchase confirmation
+    trackAnalytics(ANALYTICS_EVENTS.PRICING_PLAN_PURCHASE_CONFIRMED, {
+      plan_name: plan.name,
+      plan_id: plan.id,
+      price: plan.price,
+      credits: plan.credits,
+    });
+
     window.location.href = ctaLink;
     setIsModalOpen(false);
   };

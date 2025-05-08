@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import MediaScroller from "@/components/media-scroller";
 import { getHeroSamplesGrid } from "@/constants/hero-samples";
 import { BASE_APP_URL } from "@/lib/constants";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 const HERO_SAMPLES_GRID = getHeroSamplesGrid(3);
 
@@ -29,6 +30,10 @@ function LoginClientPage() {
   const error = searchParams.get("error");
 
   useEffect(() => {
+    trackAnalytics(ANALYTICS_EVENTS.PAGE_VIEWED, {
+      page: "Login",
+    });
+
     if (user) {
       router.push(redirectTo);
     }
@@ -43,6 +48,12 @@ function LoginClientPage() {
       setErrorMessage("Please enter a valid email address");
       return;
     }
+
+    trackAnalytics(ANALYTICS_EVENTS.LOGIN_CLICKED, {
+      method: "magic_link",
+      email_provided: true,
+    });
+
     setIsSendingMagicLink(true);
     setErrorMessage(null);
     try {
@@ -58,6 +69,13 @@ function LoginClientPage() {
     } finally {
       setIsSendingMagicLink(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    trackAnalytics(ANALYTICS_EVENTS.LOGIN_CLICKED, {
+      method: "google",
+    });
+    signInWithGoogle();
   };
 
   if (isLoading) {
@@ -108,7 +126,7 @@ function LoginClientPage() {
             </h2>
             {/* Google login placeholder */}
             <Button
-              onClick={signInWithGoogle}
+              onClick={handleGoogleLogin}
               variant="outline"
               className="w-full flex items-center justify-center gap-2 bg-white/80 hover:bg-white mb-3"
             >
@@ -191,7 +209,12 @@ function LoginClientPage() {
                   ? "Already have an account? "
                   : "Don't have an account? "}
                 <button
-                  onClick={() => setIsSignUpMode(!isSignUpMode)}
+                  onClick={() => {
+                    if (!isSignUpMode) {
+                      trackAnalytics(ANALYTICS_EVENTS.SIGNUP_CLICKED);
+                    }
+                    setIsSignUpMode(!isSignUpMode);
+                  }}
                   className="text-indigo-600 hover:underline focus:outline-none"
                 >
                   {isSignUpMode ? "Log in" : "Sign up"}

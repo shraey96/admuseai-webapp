@@ -1,11 +1,19 @@
 "use client";
 
-import PricingView from "@/components/pricing/pricing-view";
-import React from "react";
+import React, { useEffect } from "react";
 import { useCredits } from "@/context/CreditContext";
+import PricingView from "@/components/pricing/pricing-view";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 export default function PricingPage() {
   const { credits } = useCredits();
+
+  useEffect(() => {
+    trackAnalytics(ANALYTICS_EVENTS.PAGE_VIEWED, {
+      page: "Pricing",
+      current_credits: credits,
+    });
+  }, []);
 
   return (
     <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">

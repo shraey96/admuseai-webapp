@@ -13,6 +13,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import DeleteAdDialog from "@/components/ads/DeleteAdDialog";
 import ResultModal from "@/components/result-modal";
+import { trackAnalytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 export default function AdEditPage() {
   const router = useRouter();
@@ -30,6 +31,12 @@ export default function AdEditPage() {
   const [generatedImageUrls, setGeneratedImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
+    // Track page view
+    trackAnalytics(ANALYTICS_EVENTS.PAGE_VIEWED, {
+      page: isNew ? "Create New Ad" : "Edit Ad",
+      ad_id: isNew ? null : id,
+    });
+
     if (!isNew) {
       setFetching(true);
       getAd(id).then((result) => {
@@ -69,6 +76,13 @@ export default function AdEditPage() {
       }
     }
 
+    // Track ad creation attempt
+    trackAnalytics(ANALYTICS_EVENTS.AD_CREATION_INITIATED, {
+      is_new: isNew,
+      ad_type: payload.adType,
+      with_images: payload.images && payload.images.length > 0,
+    });
+
     const result = await createAd(payload);
 
     if (result.error) {
@@ -79,6 +93,7 @@ export default function AdEditPage() {
       });
     } else {
       await refreshCredits();
+
       toast({ title: "Ad created" });
 
       // Show the result modal with the generated images
@@ -103,6 +118,14 @@ export default function AdEditPage() {
   const handleDelete = async () => {
     if (!ad) return;
     setDeleting(true);
+
+    // Keep this as it tracks user intent
+    trackAnalytics(ANALYTICS_EVENTS.AD_DELETION_INITIATED, {
+      ad_id: ad.id,
+      ad_name: ad.name,
+      ad_type: ad.ad_type,
+    });
+
     const result = await deleteAd(ad.id);
     if (result.error) {
       toast({
@@ -119,14 +142,16 @@ export default function AdEditPage() {
   };
 
   const handleCloseResultModal = () => {
+    // Keep this as it tracks user intent/journey
+    trackAnalytics(ANALYTICS_EVENTS.RESULT_MODAL_CLOSED);
     setShowResultModal(false);
     router.push("/ads");
   };
 
   const handleGenerateAnotherFromResults = () => {
+    // Keep this as it tracks user intent
+    trackAnalytics(ANALYTICS_EVENTS.GENERATE_ANOTHER_FROM_RESULTS_CLICKED);
     setShowResultModal(false);
-    // If the current page is already /ads/new, AdWizard might reset itself or be ready.
-    // If user was regenerating an existing ad, this takes them to a fresh form.
     router.push("/ads/new");
   };
 
